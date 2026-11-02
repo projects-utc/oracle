@@ -1,0 +1,35 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: sephora-oracle-backend
+  datasource:
+    url: ${ORACLE_DB_URL:jdbc:oracle:thin:@//58.186.149.175:32012/FREEPDB1}
+    username: ${ORACLE_DB_USER:ora_u8k4m2p9}
+    password: ${ORACLE_DB_PASSWORD:Or4cl3_9xK2mP7vQ4wL}
+    driver-class-name: oracle.jdbc.OracleDriver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 20000
+      idle-timeout: 300000
+      max-lifetime: 1200000
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    table: sep_flyway_schema_history
+    baseline-on-migrate: true
+    baseline-version: 0
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:sephoraOracleJwtSecretKey2026MustBeAtLeast32BytesLong!}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}

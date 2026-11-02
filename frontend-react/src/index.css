@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --sephora-crimson: #810017;
+    --sephora-black: #000000;
+    --sephora-gold: #d6b672;
+    --sephora-amber: #f6b834;
+    --surface-soft: #f8f8f8;
+  }
+}
+
+/* Custom scrollbar helpers */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
