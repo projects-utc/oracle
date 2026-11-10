@@ -3,9 +3,7 @@ import { BrowserRouter, useLocation } from 'react-router-dom';
 import { StoreProvider } from './contexts/StoreContext';
 import { Header, Footer, MobileBottomNav, ToastContainer } from './components/Layout';
 import { AdminLayout } from './components/AdminLayout';
-import { StoreModal } from './components/sephora/StoreModal';
 import { AiChatModal } from './components/sephora/AiChatModal';
-import { InternationalModal } from './components/sephora/InternationalModal';
 import { AppRoutes } from './routers';
 
 function AppContent() {
@@ -31,9 +29,7 @@ function AppContent() {
       </main>
       <Footer />
       <MobileBottomNav />
-      <StoreModal />
       <AiChatModal />
-      <InternationalModal />
       <ToastContainer />
     </div>
   );

@@ -34,9 +34,14 @@ import vn.sephora.oracle.domain.reward.persistent.RewardRedemptionRepository;
 import vn.sephora.oracle.domain.user.model.User;
 import vn.sephora.oracle.domain.user.persistent.UserRepository;
 import vn.sephora.oracle.infrastructure.security.SecurityUtil;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -60,6 +65,7 @@ public class ShoppingPrivateService {
     private final RewardRedemptionRepository rewardRedemptionRepository;
     private final CatalogPublicService catalogPublicService;
     private final AuditLogService auditLogService;
+    private final JdbcTemplate jdbcTemplate;
 
     // region Favorites
     @Transactional(readOnly = true)
@@ -231,111 +237,44 @@ public class ShoppingPrivateService {
     @Transactional
     public OrderDto createOrder(CreateOrderRequest request) {
         Long userId = SecurityUtil.getCurrentUserId();
-        User user = getUser(userId);
 
-        List<CartItem> cartItems = cartItemRepository.findByUserIdWithProduct(userId);
-        if (cartItems.isEmpty()) {
-            throw new IllegalArgumentException("Giỏ hàng của bạn đang trống");
-        }
+        try {
+            String orderCode = jdbcTemplate.execute((Connection conn) -> {
+                try (CallableStatement cs = conn.prepareCall(
+                        "{call PKG_ORDER_PROCESSING.SP_PLACE_ORDER(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}")) {
+                    cs.setLong(1, userId);
+                    cs.setString(2, request.getShippingName() != null ? request.getShippingName().trim() : "");
+                    cs.setString(3, request.getShippingPhone() != null ? request.getShippingPhone().trim() : "");
+                    cs.setString(4, request.getShippingAddress() != null ? request.getShippingAddress().trim() : "");
+                    cs.setString(5, request.getFulfillmentStore());
+                    cs.setString(6, StringUtils.hasText(request.getPromoCode()) ? request.getPromoCode().trim() : null);
+                    cs.registerOutParameter(7, Types.NUMERIC); // o_order_id
+                    cs.registerOutParameter(8, Types.VARCHAR); // o_order_code
+                    cs.registerOutParameter(9, Types.NUMERIC); // o_total_amount
+                    cs.registerOutParameter(10, Types.NUMERIC); // o_points_earned
+                    cs.execute();
+                    return cs.getString(8);
+                }
+            });
 
-        BigDecimal subtotal = BigDecimal.ZERO;
-        for (CartItem ci : cartItems) {
-            Product p = ci.getProduct();
-            if (p.getStockQty() < ci.getQuantity()) {
-                throw new IllegalStateException("Sản phẩm '" + p.getName() + "' không đủ số lượng tồn kho (còn " + p.getStockQty() + ")");
+            Order savedOrder = orderRepository.findByOrderCodeWithItems(orderCode)
+                    .orElseThrow(() -> new ResourceNotFoundException("Đơn hàng vừa tạo không tìm thấy: " + orderCode));
+
+            return toOrderDto(savedOrder);
+        } catch (DataAccessException ex) {
+            String msg = ex.getMostSpecificCause() != null ? ex.getMostSpecificCause().getMessage() : ex.getMessage();
+            if (msg != null && msg.contains("ORA-20001")) {
+                String clean = msg.replaceFirst(".*ORA-20001:\\s*", "").split("\n")[0];
+                throw new IllegalStateException(clean);
+            } else if (msg != null && msg.contains("ORA-20002")) {
+                String clean = msg.replaceFirst(".*ORA-20002:\\s*", "").split("\n")[0];
+                throw new IllegalArgumentException(clean);
+            } else if (msg != null && msg.contains("ORA-20004")) {
+                String clean = msg.replaceFirst(".*ORA-20004:\\s*", "").split("\n")[0];
+                throw new IllegalArgumentException(clean);
             }
-            subtotal = subtotal.add(p.getPriceValue().multiply(BigDecimal.valueOf(ci.getQuantity())));
+            throw ex;
         }
-
-        // Apply promo code if provided
-        BigDecimal discount = BigDecimal.ZERO;
-        String cleanPromo = null;
-        if (StringUtils.hasText(request.getPromoCode())) {
-            final String promoCodeToValidate = request.getPromoCode().trim().toUpperCase();
-            cleanPromo = promoCodeToValidate;
-            if ("ALLONSALE".equals(promoCodeToValidate)) {
-                discount = subtotal.multiply(BigDecimal.valueOf(30)).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-            } else if ("ROUGE20".equals(promoCodeToValidate)) {
-                discount = subtotal.multiply(BigDecimal.valueOf(20)).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-            } else if ("VIB15".equals(promoCodeToValidate)) {
-                discount = subtotal.multiply(BigDecimal.valueOf(15)).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-            } else if ("INSIDER10".equals(promoCodeToValidate)) {
-                discount = subtotal.multiply(BigDecimal.valueOf(10)).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-            } else {
-                PromoOffer offer = promoOfferRepository.findByPromoCodeAndIsActive(promoCodeToValidate, 1)
-                        .orElseThrow(() -> new IllegalArgumentException("Mã giảm giá '" + promoCodeToValidate + "' không hợp lệ"));
-                int pct = offer.getDiscountPercent() != null ? offer.getDiscountPercent() : 10;
-                discount = subtotal.multiply(BigDecimal.valueOf(pct)).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-            }
-        }
-
-        BigDecimal total = subtotal.subtract(discount).max(BigDecimal.ZERO);
-        int pointsEarned = total.intValue();
-
-        // Generate Order Code: SEP-yyyyMMdd-XXXXXX
-        String dateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        String hexSuffix = UUID.randomUUID().toString().replace("-", "").substring(0, 6).toUpperCase();
-        String orderCode = "SEP-" + dateStr + "-" + hexSuffix;
-
-        Order order = Order.builder()
-                .orderCode(orderCode)
-                .user(user)
-                .orderStatus("PENDING")
-                .subtotalAmount(subtotal)
-                .discountAmount(discount)
-                .totalAmount(total)
-                .promoCode(cleanPromo)
-                .shippingName(request.getShippingName().trim())
-                .shippingPhone(request.getShippingPhone().trim())
-                .shippingAddress(request.getShippingAddress().trim())
-                .fulfillmentStore(request.getFulfillmentStore())
-                .pointsEarned(pointsEarned)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-
-        List<OrderItem> orderItems = new ArrayList<>();
-        for (CartItem ci : cartItems) {
-            Product p = ci.getProduct();
-            // Decrement stock
-            p.setStockQty(p.getStockQty() - ci.getQuantity());
-            p.setUpdatedAt(LocalDateTime.now());
-            productRepository.save(p);
-
-            BigDecimal lineTotal = p.getPriceValue().multiply(BigDecimal.valueOf(ci.getQuantity()));
-            OrderItem oi = OrderItem.builder()
-                    .order(order)
-                    .product(p)
-                    .skuId(p.getSkuId())
-                    .productName(p.getName())
-                    .brand(p.getBrand())
-                    .imageUrl(p.getImageUrl())
-                    .unitPrice(p.getPriceValue())
-                    .quantity(ci.getQuantity())
-                    .lineTotal(lineTotal)
-                    .build();
-            orderItems.add(oi);
-        }
-        order.setItems(orderItems);
-        Order savedOrder = orderRepository.save(order);
-
-        // Update user points and tier
-        user.setPointsBalance(user.getPointsBalance() + pointsEarned);
-        if (user.getPointsBalance() >= 1000) {
-            user.setLoyaltyTier("ROUGE");
-        } else if (user.getPointsBalance() >= 350) {
-            user.setLoyaltyTier("VIB");
-        }
-        user.setUpdatedAt(LocalDateTime.now());
-        userRepository.save(user);
-
-        // Clear user cart
-        cartItemRepository.deleteAllByUserId(userId);
-
-        auditLogService.record(user.getId(), user.getUsername(), "CREATE_ORDER", "ORDER", savedOrder.getOrderCode(),
-                "Đặt đơn hàng mới thành công. Tổng tiền: $" + total + ", Tích luỹ: " + pointsEarned + " điểm.");
-
-        return toOrderDto(savedOrder);
     }
 
     @Transactional(readOnly = true)

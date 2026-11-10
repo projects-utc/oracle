@@ -44,6 +44,7 @@ import vn.sephora.oracle.domain.store.persistent.StoreLocationRepository;
 import vn.sephora.oracle.domain.user.model.User;
 import vn.sephora.oracle.domain.user.persistent.UserRepository;
 import vn.sephora.oracle.infrastructure.security.SecurityUtil;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -71,27 +72,30 @@ public class AdminManagementService {
     private final StorefrontPublicService storefrontPublicService;
     private final ShoppingPrivateService shoppingPrivateService;
     private final AuthService authService;
+    private final JdbcTemplate jdbcTemplate;
 
     // region Dashboard
     @Transactional(readOnly = true)
     public AdminDashboardResponse getDashboard() {
-        List<Order> allOrders = orderRepository.findAllByOrderByCreatedAtDesc();
-        BigDecimal totalRevenue = allOrders.stream()
-                .filter(o -> !"CANCELLED".equalsIgnoreCase(o.getOrderStatus()))
-                .map(Order::getTotalAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        String sql = "SELECT total_revenue, total_orders, pending_orders, completed_orders, cancelled_orders, " +
+                     "total_products, low_stock_products, total_customers, active_promotions, total_subscriptions " +
+                     "FROM VW_DASHBOARD_METRICS";
 
-        long pendingCount = allOrders.stream().filter(o -> "PENDING".equalsIgnoreCase(o.getOrderStatus())).count();
-        long completedCount = allOrders.stream().filter(o -> "COMPLETED".equalsIgnoreCase(o.getOrderStatus())).count();
-        long cancelledCount = allOrders.stream().filter(o -> "CANCELLED".equalsIgnoreCase(o.getOrderStatus())).count();
+        AdminDashboardResponse metrics = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> AdminDashboardResponse.builder()
+                .totalRevenue(rs.getBigDecimal("total_revenue"))
+                .totalOrders(rs.getLong("total_orders"))
+                .pendingOrders(rs.getLong("pending_orders"))
+                .completedOrders(rs.getLong("completed_orders"))
+                .cancelledOrders(rs.getLong("cancelled_orders"))
+                .totalProducts(rs.getLong("total_products"))
+                .lowStockProducts(rs.getLong("low_stock_products"))
+                .totalCustomers(rs.getLong("total_customers"))
+                .activePromotions(rs.getLong("active_promotions"))
+                .totalSubscriptions(rs.getLong("total_subscriptions"))
+                .build()
+        );
 
-        long totalProducts = productRepository.count();
-        long lowStockCount = productRepository.findAll().stream().filter(p -> p.getStockQty() <= 10).count();
-        long totalCustomers = userRepository.count();
-        long activeOffers = promoOfferRepository.findAllByIsActiveOrderByDisplayOrderAsc(1).size();
-        long totalSubscriptions = subscriptionRepository.count();
-
-        List<OrderDto> recentOrders = allOrders.stream()
+        List<OrderDto> recentOrders = orderRepository.findAllByOrderByCreatedAtDesc().stream()
                 .limit(8)
                 .map(shoppingPrivateService::toOrderDto)
                 .collect(Collectors.toList());
@@ -100,20 +104,9 @@ public class AdminManagementService {
                 .map(this::toAuditLogDto)
                 .collect(Collectors.toList());
 
-        return AdminDashboardResponse.builder()
-                .totalRevenue(totalRevenue)
-                .totalOrders(allOrders.size())
-                .pendingOrders(pendingCount)
-                .completedOrders(completedCount)
-                .cancelledOrders(cancelledCount)
-                .totalProducts(totalProducts)
-                .lowStockProducts(lowStockCount)
-                .totalCustomers(totalCustomers)
-                .activePromotions(activeOffers)
-                .totalSubscriptions(totalSubscriptions)
-                .recentOrders(recentOrders)
-                .recentAuditLogs(recentLogs)
-                .build();
+        metrics.setRecentOrders(recentOrders);
+        metrics.setRecentAuditLogs(recentLogs);
+        return metrics;
     }
     // endregion
 
@@ -368,15 +361,8 @@ public class AdminManagementService {
             throw new IllegalStateException("Đơn hàng đã hủy không thể mở lại trạng thái khác");
         }
 
-        if ("CANCELLED".equalsIgnoreCase(target)) {
-            // Restore product stock
-            for (OrderItem oi : order.getItems()) {
-                Product p = oi.getProduct();
-                p.setStockQty(p.getStockQty() + oi.getQuantity());
-                p.setUpdatedAt(LocalDateTime.now());
-                productRepository.save(p);
-            }
-        }
+        // Lưu ý: Nghiệp vụ hoàn tồn kho khi hủy đơn do Trigger Oracle TRG_RESTORE_STOCK_ON_CANCEL
+        // tự động thực thi ở tầng cơ sở dữ liệu khi order_status chuyển sang CANCELLED.
 
         order.setOrderStatus(target);
         order.setUpdatedAt(LocalDateTime.now());

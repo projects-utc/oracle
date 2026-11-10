@@ -1,4 +1,3 @@
-SET DEFINE OFF;
 -- Migration V3: Cập nhật tên sản phẩm, biến thể và giá trị tiền tệ sang tiếng Việt (VNĐ)
 -- Cập nhật danh mục sang tiếng Việt
 UPDATE sep_categories SET label = 'Bộ quà tặng' WHERE slug = 'gifts-value-sets';
