@@ -146,17 +146,6 @@ export const CORE_VIETNAMESE_CATEGORIES: NavCategory[] = [
     ],
   },
   {
-    id: 'cat-fragrance',
-    slug: 'fragrance',
-    label: 'Nước hoa',
-    subcategories: [
-      { label: 'Nước hoa Nữ cao cấp', href: '/shop/fragrance' },
-      { label: 'Nước hoa Nam lịch lãm', href: '/shop/fragrance' },
-      { label: 'Nước hoa Unisex độc đáo', href: '/shop/fragrance' },
-      { label: 'Xịt thơm Body Mist', href: '/shop/fragrance' },
-    ],
-  },
-  {
     id: 'cat-hair',
     slug: 'hair',
     label: 'Chăm sóc tóc',
@@ -165,6 +154,17 @@ export const CORE_VIETNAMESE_CATEGORIES: NavCategory[] = [
       { label: 'Mặt nạ & Dầu ủ tóc', href: '/shop/hair' },
       { label: 'Tinh dầu & Serum dưỡng tóc', href: '/shop/hair' },
       { label: 'Xịt dưỡng & Giữ nếp tóc', href: '/shop/hair' },
+    ],
+  },
+  {
+    id: 'cat-fragrance',
+    slug: 'fragrance',
+    label: 'Nước hoa',
+    subcategories: [
+      { label: 'Nước hoa Nữ cao cấp', href: '/shop/fragrance' },
+      { label: 'Nước hoa Nam lịch lãm', href: '/shop/fragrance' },
+      { label: 'Nước hoa Unisex độc đáo', href: '/shop/fragrance' },
+      { label: 'Xịt thơm Body Mist', href: '/shop/fragrance' },
     ],
   },
   {

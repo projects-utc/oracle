@@ -415,3 +415,4 @@ export function getProductDescription(skuId: string, fallbackName?: string): str
   }
   return `Sản phẩm ${fallbackName || 'mỹ phẩm chính hãng'} cao cấp được phân phối chính thức tại Sephora, cam kết 100% nguồn gốc xuất xứ rõ ràng, hạn sử dụng mới nhất và an toàn cho người sử dụng.`;
 }
+
