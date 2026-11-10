@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { storefrontApi } from '../../api/storefrontApi';
 import { Product } from '../../data';
+import { formatCategorySlug } from '../../constants';
 import { ProductCard } from '../../components/sephora/ProductCard';
 
 export default function SearchResultsPage() {
@@ -37,7 +38,7 @@ export default function SearchResultsPage() {
   const title = q
     ? `Kết quả tìm kiếm cho "${q}"`
     : slug
-    ? `Danh mục: ${slug.replace(/-/g, ' ').toUpperCase()}`
+    ? `Danh mục: ${formatCategorySlug(slug)}`
     : 'Tất cả sản phẩm làm đẹp';
 
   return (
@@ -46,13 +47,13 @@ export default function SearchResultsPage() {
       <div className="text-xs text-gray-500 mb-4 flex items-center gap-1.5">
         <Link to="/" className="hover:underline">Trang chủ</Link>
         <span>/</span>
-        <span className="font-semibold text-black">{q ? 'Tìm kiếm' : slug || 'Sản phẩm'}</span>
+        <span className="font-semibold text-black">{q ? 'Tìm kiếm' : formatCategorySlug(slug)}</span>
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4 border-b border-gray-200 pb-4 mb-6">
         <div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-black tracking-tight">{title}</h1>
-          <p className="text-xs text-gray-500 mt-1">Tìm thấy {products.length} sản phẩm từ cơ sở dữ liệu Oracle</p>
+          <p className="text-xs text-gray-500 mt-1">Hiển thị {products.length} sản phẩm phù hợp</p>
         </div>
 
         {/* Sort & Filter Controls */}

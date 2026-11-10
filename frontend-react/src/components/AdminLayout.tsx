@@ -7,7 +7,6 @@ import {
   Package,
   ShoppingBag,
   TicketPercent,
-  Store,
   FileText,
   LogOut,
   ArrowLeft,
@@ -52,32 +51,24 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
 
   const navGroups = [
     {
-      group: 'BÁO CÁO & TỔNG QUAN',
+      group: 'BÁO CÁO & THỐNG KÊ',
       items: [
-        { path: '/admin', label: 'Tổng quan Dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
+        { path: '/admin', label: 'Báo cáo Doanh thu', icon: <LayoutDashboard className="w-4 h-4" /> },
       ],
     },
     {
-      group: 'QUẢN LÝ NGHIỆP VỤ',
+      group: 'QUẢN LÝ BÁN HÀNG',
       items: [
-        { path: '/admin/products', label: 'Quản lý Sản phẩm', icon: <Package className="w-4 h-4" /> },
-        { path: '/admin/orders', label: 'Đơn đặt hàng toàn sàn', icon: <ShoppingBag className="w-4 h-4" /> },
-        { path: '/admin/promotions', label: 'Ưu đãi & Quà đổi điểm', icon: <TicketPercent className="w-4 h-4" /> },
-        { path: '/admin/users', label: 'Người dùng & Phân quyền', icon: <Users className="w-4 h-4" /> },
-        { path: '/admin/stores', label: 'Cửa hàng & Đăng ký SMS/Email', icon: <Store className="w-4 h-4" /> },
-      ],
-    },
-    {
-      group: 'GIÁM SÁT & BẢO MẬT',
-      items: [
-        { path: '/admin/audit-logs', label: 'Nhật ký kiểm toán', icon: <FileText className="w-4 h-4" /> },
+        { path: '/admin/products', label: 'Sản phẩm & Kho hàng', icon: <Package className="w-4 h-4" /> },
+        { path: '/admin/orders', label: 'Quản lý Đơn hàng', icon: <ShoppingBag className="w-4 h-4" /> },
+        { path: '/admin/users', label: 'Tài khoản & Kiểm toán', icon: <Users className="w-4 h-4" /> },
       ],
     },
   ];
 
   const handleLogout = () => {
     logout();
-    addToast('Đã đăng xuất khỏi tài khoản Quản trị viên', 'info');
+    addToast('Đã đăng xuất khỏi tài khoản quản trị', 'info');
     navigate('/');
   };
 
@@ -160,14 +151,14 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             className="flex items-center gap-2 text-xs text-slate-400 hover:text-white px-2 py-1.5 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Về Storefront Khách hàng</span>
+            <span>← Về trang mua hàng</span>
           </Link>
           <button
             onClick={handleLogout}
             className="flex items-center gap-2 text-xs text-rose-400 hover:text-rose-300 px-2 py-1.5 transition-colors w-full cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
-            <span>Đăng xuất ({currentUser.username})</span>
+            <span>Đăng xuất (@{currentUser.username})</span>
           </button>
         </div>
       </aside>
@@ -182,8 +173,8 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           >
             ☰ Menu
           </button>
-          <div className="font-extrabold text-sm text-black">Sephora Admin</div>
-          <Link to="/" className="text-xs font-bold text-gray-600">Storefront</Link>
+          <div className="font-extrabold text-sm text-black">Quản trị Hệ thống</div>
+          <Link to="/" className="text-xs font-bold text-gray-600">Trang chủ</Link>
         </header>
 
         {/* Page Content */}

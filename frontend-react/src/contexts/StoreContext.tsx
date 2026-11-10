@@ -174,7 +174,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       if (res.success && res.data?.user) {
         const u = res.data.user;
         setCurrentUser(u);
-        addToast(`Đăng ký thành công! Chào mừng bạn đến với Sephora Beauty Insider ✨`, 'success');
+        addToast(`Đăng ký tài khoản thành công! ✨`, 'success');
         await loadUserData();
         return { success: true, user: u };
       }
@@ -218,7 +218,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           if (favListRes.success && favListRes.data) {
             setFavorites(favListRes.data);
           }
-          addToast(res.data.loved ? 'Đã thêm vào danh sách Loves ❤️' : 'Đã xóa khỏi danh sách Loves', 'info');
+          addToast(res.data.loved ? 'Đã thêm vào mục yêu thích ❤️' : 'Đã xóa khỏi mục yêu thích', 'info');
         }
       } catch {
         addToast('Không thể cập nhật danh sách yêu thích', 'error');

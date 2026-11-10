@@ -19,10 +19,7 @@ import OffersPage from './pages/guest/OffersPage';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import AdminProductsPage from './pages/admin/AdminProductsPage';
 import AdminOrdersPage from './pages/admin/AdminOrdersPage';
-import AdminPromotionsPage from './pages/admin/AdminPromotionsPage';
 import AdminUsersPage from './pages/admin/AdminUsersPage';
-import AdminStoresPage from './pages/admin/AdminStoresPage';
-import AdminAuditLogsPage from './pages/admin/AdminAuditLogsPage';
 
 export function AppRoutes() {
   return (
@@ -48,10 +45,10 @@ export function AppRoutes() {
       <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
       <Route path="/admin/products" element={<AdminProductsPage />} />
       <Route path="/admin/orders" element={<AdminOrdersPage />} />
-      <Route path="/admin/promotions" element={<AdminPromotionsPage />} />
+      <Route path="/admin/promotions" element={<Navigate to="/admin/products" replace />} />
       <Route path="/admin/users" element={<AdminUsersPage />} />
-      <Route path="/admin/stores" element={<AdminStoresPage />} />
-      <Route path="/admin/audit-logs" element={<AdminAuditLogsPage />} />
+      <Route path="/admin/stores" element={<Navigate to="/admin/products" replace />} />
+      <Route path="/admin/audit-logs" element={<Navigate to="/admin/users" replace />} />
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />

@@ -51,19 +51,19 @@ export default function LoginPage() {
             <SephoraLogo className="h-5 w-auto mx-auto text-black" />
           </Link>
           <h1 className="text-xl font-extrabold text-black tracking-tight">Đăng nhập tài khoản</h1>
-          <p className="text-xs text-gray-500 mt-1">Trải nghiệm mua sắm cá nhân hóa & tích điểm Beauty Insider</p>
+          <p className="text-xs text-gray-500 mt-1">Đăng nhập để quản lý đơn mua và lưu thông tin nhận hàng</p>
         </div>
 
         {/* 1-Click Demo Pills */}
         <div className="mb-6 p-3 bg-neutral-50 rounded-xl border border-gray-200">
-          <div className="text-[11px] font-bold text-gray-600 uppercase tracking-wider mb-2">Tài khoản thử nghiệm:</div>
+          <div className="text-[11px] font-bold text-gray-600 uppercase tracking-wider mb-2">Tài khoản dùng thử:</div>
           <div className="grid grid-cols-2 gap-2 text-xs">
             <button
               type="button"
               onClick={() => fillAccount('guest.demo', '123')}
               className="p-2 rounded-lg border border-gray-300 hover:border-black bg-white font-semibold text-left transition-all"
             >
-              <div className="text-black font-bold">Khách hàng VIP</div>
+              <div className="text-black font-bold">Khách mua hàng</div>
               <div className="text-[10px] text-gray-500 font-mono">guest.demo / 123</div>
             </button>
             <button
@@ -118,7 +118,7 @@ export default function LoginPage() {
         <div className="mt-6 text-center text-xs text-gray-500 border-t border-gray-100 pt-4">
           Chưa có tài khoản?{' '}
           <Link to="/register" className="font-bold text-black underline">
-            Đăng ký ngay (nhận 100 điểm thưởng)
+            Đăng ký tài khoản mới
           </Link>
         </div>
       </div>

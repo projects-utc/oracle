@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Product } from '../../data';
 import { useStore } from '../../contexts/StoreContext';
+import { formatBadge } from '../../constants';
 import { HeartIcon, StarIcon } from './icons';
 
 export function ProductCard({ product }: { product: Product }) {
@@ -53,7 +54,7 @@ export function ProductCard({ product }: { product: Product }) {
               added ? 'bg-emerald-700 text-white' : 'bg-black text-white hover:bg-neutral-800'
             }`}
           >
-            {added ? 'Đã thêm ✓' : 'Thêm nhanh'}
+            {added ? 'Đã thêm ✓' : 'Thêm vào giỏ'}
           </button>
         </div>
       </div>
@@ -63,7 +64,7 @@ export function ProductCard({ product }: { product: Product }) {
         {product.badge && (
           <div className="mb-1">
             <span className="text-[10px] font-bold uppercase tracking-wider text-black bg-[#f2f2f2] px-1.5 py-0.5 rounded-xs">
-              {product.badge}
+              {formatBadge(product.badge)}
             </span>
           </div>
         )}

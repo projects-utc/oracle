@@ -86,8 +86,9 @@ export default function BasketPage() {
 
       if (res.success && res.data) {
         await refreshUserSession();
-        addToast('Đặt hàng thành công! Đơn hàng đã được lưu vào Oracle Database', 'success');
+        addToast('Đặt hàng thành công! Cảm ơn bạn đã mua sắm tại Sephora.', 'success');
         navigate(`/order-success/${res.data.orderCode}`);
+      } else {
         addToast(res.message || 'Lỗi khi tạo đơn hàng', 'error');
       }
     } catch {
@@ -180,15 +181,15 @@ export default function BasketPage() {
         <div className="space-y-6">
           {/* Order Summary Card */}
           <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-xs">
-            <h2 className="text-base font-extrabold text-black mb-4">Tóm tắt đơn hàng</h2>
+            <h2 className="text-base font-extrabold text-black mb-4">Thông tin thanh toán</h2>
 
             {/* Promo Code Box */}
             <div className="mb-4">
-              <label className="block text-xs font-bold text-gray-700 mb-1.5">Mã giảm giá khuyến mãi</label>
+              <label className="block text-xs font-bold text-gray-700 mb-1.5">Mã giảm giá</label>
               <div className="flex gap-2">
                 <input
                   type="text"
-                  placeholder="Ví dụ: ALLONSALE"
+                  placeholder="Nhập mã giảm giá..."
                   value={promoCodeInput}
                   onChange={(e) => setPromoCodeInput(e.target.value.toUpperCase())}
                   className="flex-1 bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-xs font-mono font-bold uppercase outline-none focus:border-black"
@@ -202,55 +203,27 @@ export default function BasketPage() {
                 </button>
               </div>
               {promoError && <p className="text-[11px] text-rose-600 mt-1 font-medium">{promoError}</p>}
-
-              {/* Quick Promo Pills */}
-              <div className="flex flex-wrap gap-1.5 mt-2">
-                <button
-                  type="button"
-                  onClick={() => handleApplyPromo('ALLONSALE')}
-                  className="text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100 cursor-pointer"
-                >
-                  ALLONSALE (-30%)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleApplyPromo('VIB15')}
-                  className="text-[10px] font-bold px-2 py-0.5 rounded-full border border-gray-300 bg-gray-50 text-gray-800 hover:bg-gray-100 cursor-pointer"
-                >
-                  VIB15 (-15%)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleApplyPromo('ROUGE20')}
-                  className="text-[10px] font-bold px-2 py-0.5 rounded-full border border-rose-300 bg-rose-50 text-rose-900 hover:bg-rose-100 cursor-pointer"
-                >
-                  ROUGE20 (-20%)
-                </button>
-              </div>
             </div>
 
             {/* Cost Breakdown */}
             <div className="space-y-2 text-xs border-t border-gray-100 pt-4 mb-4">
               <div className="flex justify-between text-gray-600">
-                <span>Tạm tính hàng hóa:</span>
+                <span>Tạm tính:</span>
                 <span className="font-bold text-black">{formatUSD(subtotal)}</span>
               </div>
               {appliedPromo && (
                 <div className="flex justify-between text-emerald-700 font-medium">
-                  <span>Mã {appliedPromo.code} ({appliedPromo.discountPercent}%):</span>
+                  <span>Giảm giá ({appliedPromo.code} -{appliedPromo.discountPercent}%):</span>
                   <span>-{formatUSD(discountAmount)}</span>
                 </div>
               )}
               <div className="flex justify-between text-gray-600">
-                <span>Phí giao hàng:</span>
+                <span>Phí vận chuyển:</span>
                 <span className="font-bold text-emerald-700">Miễn phí</span>
               </div>
-              <div className="flex justify-between text-sm font-extrabold text-black pt-2 border-t border-gray-200">
-                <span>Tổng thanh toán:</span>
+              <div className="flex justify-between text-sm font-extrabold text-black pt-3 border-t border-gray-200">
+                <span>Tổng cộng:</span>
                 <span className="text-base text-[#810017]">{formatUSD(finalTotal)}</span>
-              </div>
-              <div className="text-[11px] text-gray-500 text-right">
-                Tích luỹ: +{Math.floor(finalTotal)} điểm Beauty Insider
               </div>
             </div>
           </div>
@@ -261,54 +234,60 @@ export default function BasketPage() {
 
             {!currentUser && (
               <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900">
-                Bạn đang mua sắm với tư cách khách. Vui lòng{' '}
-                <Link to="/login?from=/basket" className="font-bold underline">đăng nhập</Link> để lưu đơn hàng vào tài khoản.
+                Bạn chưa đăng nhập. Vui lòng{' '}
+                <Link to="/login?from=/basket" className="font-bold underline">đăng nhập</Link> để lưu đơn hàng vào lịch sử tài khoản.
               </div>
             )}
 
             <form onSubmit={handleCheckout} className="space-y-3 text-xs">
               <div>
-                <label className="block font-bold text-gray-700 mb-1">Họ tên người nhận *</label>
+                <label className="block text-[11px] font-bold text-gray-600 mb-1">Họ và tên người nhận *</label>
                 <input
                   type="text"
                   required
+                  placeholder="Ví dụ: Lê Hoàng Nam"
                   value={shippingName}
                   onChange={(e) => setShippingName(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-black outline-none"
-                  placeholder="Lê Hoàng Nam"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-black"
                 />
               </div>
-
               <div>
-                <label className="block font-bold text-gray-700 mb-1">Số điện thoại *</label>
+                <label className="block text-[11px] font-bold text-gray-600 mb-1">Số điện thoại liên hệ *</label>
                 <input
                   type="tel"
                   required
+                  placeholder="Ví dụ: 0901234567"
                   value={shippingPhone}
                   onChange={(e) => setShippingPhone(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-black outline-none"
-                  placeholder="0900000003"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-black"
                 />
               </div>
-
               <div>
-                <label className="block font-bold text-gray-700 mb-1">Địa chỉ giao hàng *</label>
+                <label className="block text-[11px] font-bold text-gray-600 mb-1">Địa chỉ giao hàng chi tiết *</label>
                 <textarea
                   required
                   rows={2}
+                  placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố..."
                   value={shippingAddress}
                   onChange={(e) => setShippingAddress(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-black outline-none"
-                  placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-black"
                 />
+              </div>
+
+              <div className="p-3 bg-neutral-50 rounded-xl border border-gray-200 text-gray-600 text-[11px] space-y-1">
+                <div className="font-bold text-black flex items-center gap-1.5">
+                  <span>💵</span>
+                  <span>Phương thức thanh toán:</span>
+                </div>
+                <div>Thanh toán tiền mặt khi nhận hàng (COD). Kiểm tra hàng trước khi thanh toán.</div>
               </div>
 
               <button
                 type="submit"
                 disabled={loadingCheckout}
-                className="w-full bg-[#810017] text-white py-3.5 rounded-full text-xs font-bold hover:bg-[#6b0013] transition-colors cursor-pointer shadow-md disabled:opacity-50 mt-2"
+                className="w-full mt-2 bg-[#810017] hover:bg-[#6b0013] text-white font-bold py-3.5 rounded-full text-xs transition-colors cursor-pointer disabled:opacity-50 shadow-md"
               >
-                {loadingCheckout ? 'Đang xử lý đơn hàng...' : `Đặt hàng ngay • ${formatUSD(finalTotal)}`}
+                {loadingCheckout ? 'Đang tạo đơn hàng...' : `Đặt hàng ngay (${formatUSD(finalTotal)})`}
               </button>
             </form>
           </div>

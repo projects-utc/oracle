@@ -5,6 +5,12 @@ import { SavingsBannerData } from '../../data';
 export function SavingsBanner({ data }: { data?: SavingsBannerData | null }) {
   if (!data) return null;
 
+  const isEnglishTitle = data.title?.toUpperCase().includes('SAVINGS');
+  const title = isEnglishTitle ? 'ĐẠI TIỆC ƯU ĐÃI THÁNG NÀY' : data.title;
+  const subtitle = isEnglishTitle
+    ? 'Ưu đãi giảm giá đặc quyền dành cho mọi đơn hàng. Áp dụng mã giảm giá khi thanh toán.'
+    : data.subtitle;
+
   return (
     <section className="w-full my-6 font-sans">
       <div className="max-w-[1280px] mx-auto px-4">
@@ -16,13 +22,13 @@ export function SavingsBanner({ data }: { data?: SavingsBannerData | null }) {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="max-w-xl text-center md:text-left">
               <span className="inline-block bg-[#f6b834] text-black font-extrabold text-[10px] tracking-wider uppercase px-2.5 py-1 rounded-full mb-3">
-                SỰ KIỆN ƯU ĐÃI
+                CHƯƠNG TRÌNH KHUYẾN MÃI
               </span>
               <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-2">
-                {data.title}
+                {title}
               </h2>
               <p className="text-xs md:text-sm text-white/90 leading-relaxed">
-                {data.subtitle}
+                {subtitle}
               </p>
             </div>
 
@@ -35,7 +41,9 @@ export function SavingsBanner({ data }: { data?: SavingsBannerData | null }) {
                   style={{ backgroundColor: tier.badgeColor, color: tier.textColor }}
                 >
                   <div className="text-[10px] font-bold uppercase tracking-wider opacity-80">{tier.label}</div>
-                  <div className="text-base font-extrabold my-0.5">{tier.discount}</div>
+                  <div className="text-base font-extrabold my-0.5">
+                    {tier.discount?.replace('OFF', 'GIẢM')}
+                  </div>
                   <div className="text-[9px] font-medium opacity-75">{tier.dates}</div>
                 </div>
               ))}

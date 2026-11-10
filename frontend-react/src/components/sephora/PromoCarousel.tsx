@@ -32,8 +32,8 @@ export function PromoCarousel({ offers }: { offers?: PromoOffer[] }) {
       <div className="max-w-[1280px] mx-auto px-4">
         <div className="flex items-baseline justify-between mb-4">
           <div>
-            <h2 className="text-lg sm:text-xl font-bold tracking-tight text-black">Beauty Offers</h2>
-            <p className="text-xs text-gray-500 mt-0.5">Quà tặng kèm theo nhãn hàng và ưu đãi giảm giá độc quyền</p>
+            <h2 className="text-lg sm:text-xl font-bold tracking-tight text-black">Mã giảm giá & Quà tặng đặc biệt</h2>
+            <p className="text-xs text-gray-500 mt-0.5">Quà tặng theo nhãn hàng và ưu đãi giảm giá độc quyền</p>
           </div>
         </div>
 

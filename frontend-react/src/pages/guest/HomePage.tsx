@@ -35,10 +35,10 @@ export default function HomePage() {
       {/* 1. Hero Editorial Banners */}
       <HeroBanners banners={homeData.heroBanners} />
 
-      {/* 2. Product Carousel: Chosen For You */}
+      {/* 2. Product Carousel: Gợi ý cho bạn */}
       <ProductCarousel
-        title="Chosen For You"
-        subtitle="Gợi ý sản phẩm làm đẹp cá nhân hóa dành riêng cho bạn"
+        title="Gợi ý cho bạn"
+        subtitle="Những sản phẩm làm đẹp nổi bật được yêu thích nhất"
         viewAllUrl="/shop/gifts-value-sets"
         products={homeData.chosenForYou}
       />
@@ -49,10 +49,10 @@ export default function HomePage() {
       {/* 4. Beauty Offers (23 items) */}
       <PromoCarousel offers={homeData.beautyOffers} />
 
-      {/* 5. Product Carousel: Just Dropped */}
+      {/* 5. Product Carousel: Mới về */}
       <ProductCarousel
-        title="Just Dropped"
-        subtitle="Những công thức và bộ sưu tập mỹ phẩm mới ra mắt"
+        title="Sản phẩm mới về"
+        subtitle="Các dòng mỹ phẩm chính hãng vừa cập bến"
         viewAllUrl="/shop/new"
         products={homeData.justDropped}
       />
@@ -60,18 +60,15 @@ export default function HomePage() {
       {/* 6. Feature Tiles */}
       <FeatureTiles tiles={homeData.featureTiles} />
 
-      {/* 7. Product Carousel: Selling Fast */}
+      {/* 7. Product Carousel: Bán chạy nhất */}
       <ProductCarousel
-        title="Selling Fast"
-        subtitle="Các dòng sản phẩm đang bán chạy nhất, hãy sở hữu ngay"
+        title="Bán chạy nhất"
+        subtitle="Top sản phẩm thịnh hành được khách hàng chọn mua nhiều nhất"
         viewAllUrl="/shop/trending-on-social"
         products={homeData.sellingFast}
       />
 
-      {/* 8. Beauty Insider Rewards */}
-      <RewardsCarousel rewards={homeData.rewards} />
-
-      {/* 9. Guided Shopping */}
+      {/* 8. Guided Shopping */}
       <GuidanceSection links={homeData.guidanceLinks} />
 
       {/* 10. Reassurance Banners */}

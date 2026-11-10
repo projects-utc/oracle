@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { shoppingApi } from '../../api/shoppingApi';
 import { Order } from '../../data';
 import { useStore } from '../../contexts/StoreContext';
-import { formatUSD, formatPoints } from '../../constants';
+import { formatUSD, formatOrderStatus } from '../../constants';
 
 export default function MyOrdersPage() {
   const { currentUser } = useStore();
@@ -25,8 +25,8 @@ export default function MyOrdersPage() {
       <div className="max-w-md mx-auto py-20 px-4 text-center font-sans">
         <div className="text-3xl mb-3">🔒</div>
         <h2 className="text-lg font-bold text-black mb-2">Vui lòng đăng nhập</h2>
-        <p className="text-xs text-gray-500 mb-6">Bạn cần đăng nhập để theo dõi lịch sử đơn hàng của mình.</p>
-        <Link to="/login?from=/my-orders" className="inline-block bg-black text-white text-xs font-bold px-6 py-2.5 rounded-full">
+        <p className="text-xs text-gray-500 mb-6">Bạn cần đăng nhập để theo dõi danh sách đơn hàng đã mua.</p>
+        <Link to="/login?from=/my-orders" className="inline-block bg-black text-white text-xs font-bold px-6 py-2.5 rounded-full hover:bg-neutral-800 transition-colors">
           Đăng nhập ngay
         </Link>
       </div>
@@ -38,20 +38,20 @@ export default function MyOrdersPage() {
       <div className="flex items-baseline justify-between border-b border-gray-200 pb-4 mb-6">
         <div>
           <h1 className="text-2xl font-extrabold text-black tracking-tight">Đơn hàng của tôi</h1>
-          <p className="text-xs text-gray-500 mt-1">Theo dõi trạng thái đơn hàng và lịch sử điểm thưởng Beauty Insider</p>
+          <p className="text-xs text-gray-500 mt-1">Theo dõi tiến độ xử lý và lịch sử các đơn hàng bạn đã đặt</p>
         </div>
         <Link to="/" className="text-xs font-bold text-black hover:underline">← Về trang chủ</Link>
       </div>
 
       {loading ? (
-        <div className="py-20 text-center text-xs text-gray-500">Đang tải lịch sử đơn hàng từ Oracle...</div>
+        <div className="py-20 text-center text-xs text-gray-500">Đang tải lịch sử đơn hàng...</div>
       ) : orders.length === 0 ? (
         <div className="py-16 text-center bg-gray-50 rounded-2xl p-8">
           <div className="text-3xl mb-2">📦</div>
           <h3 className="font-bold text-base text-gray-900 mb-1">Bạn chưa có đơn hàng nào</h3>
           <p className="text-xs text-gray-500 mb-4">Các đơn hàng bạn đặt sẽ được lưu trữ và hiển thị chi tiết tại đây.</p>
-          <Link to="/" className="inline-block bg-black text-white text-xs font-bold px-6 py-2.5 rounded-full">
-            Bắt đầu mua sắm
+          <Link to="/" className="inline-block bg-black text-white text-xs font-bold px-6 py-2.5 rounded-full hover:bg-neutral-800 transition-colors">
+            Khám phá sản phẩm
           </Link>
         </div>
       ) : (
@@ -75,7 +75,7 @@ export default function MyOrdersPage() {
                       ? 'bg-sky-50 text-sky-800 border-sky-300'
                       : 'bg-amber-50 text-amber-800 border-amber-300'
                   }`}>
-                    {o.orderStatus}
+                    {formatOrderStatus(o.orderStatus)}
                   </span>
                 </div>
               </div>
@@ -101,8 +101,8 @@ export default function MyOrdersPage() {
                   Giao tới: <span className="font-semibold text-black">{o.shippingName}</span> • {o.shippingAddress}
                 </div>
                 <div className="text-right">
-                  <div className="font-extrabold text-base text-[#810017]">{formatUSD(o.totalAmount)}</div>
-                  <div className="text-[10px] text-emerald-700 font-semibold">+{formatPoints(o.pointsEarned)}</div>
+                  <span className="text-gray-500 text-xs mr-2">Tổng tiền:</span>
+                  <span className="font-extrabold text-base text-[#810017]">{formatUSD(o.totalAmount)}</span>
                 </div>
               </div>
             </div>

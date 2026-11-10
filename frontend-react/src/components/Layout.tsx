@@ -1,27 +1,18 @@
 import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useStore } from '../contexts/StoreContext';
-import { formatPoints } from '../constants';
 import { storefrontApi } from '../api/storefrontApi';
 import {
   SephoraLogo,
   SearchIcon,
-  AiBeautyIcon,
-  StoreIcon,
-  ServicesIcon,
-  HeartIcon,
   BasketIcon,
   SparkleIcon,
   CloseIcon,
   ChevronDown,
-  ChatIcon,
-  AppIcon,
-  SmsIcon,
-  CreditCardIcon,
 } from './sephora/icons';
 
 export function Header() {
-  const { currentUser, logout, homeData, cartCount, lovedSkuIds, setShowStoreModal, setShowAiChatModal, selectedStore } = useStore();
+  const { currentUser, logout, homeData, cartCount } = useStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [showSignInDropdown, setShowSignInDropdown] = useState(false);
@@ -42,15 +33,10 @@ export function Header() {
       <div className="bg-[#810017] text-white text-xs py-2 px-4 transition-colors">
         <div className="max-w-[1280px] mx-auto flex items-center justify-between">
           <div className="flex-1 text-center md:text-left font-medium tracking-tight">
-            <span>Muốn giảm ngay 30% toàn bộ Sephora Collection? Nhập mã </span>
-            <span className="font-bold underline text-[#f6b834] cursor-pointer" onClick={() => navigate('/offers')}>
-              ALLONSALE
-            </span>
-            <span> khi thanh toán ▸</span>
+            <span>✨ Chào mừng bạn đến với Mỹ Phẩm Sephora — Cam kết chính hãng 100%, miễn phí vận chuyển toàn quốc</span>
           </div>
-          <div className="hidden md:flex items-center gap-1 font-bold tracking-wider text-sm text-[#f6b834]">
-            <span>30%</span>
-            <span className="text-[10px] leading-tight">OFF</span>
+          <div className="hidden md:flex items-center gap-1 font-bold tracking-wider text-[11px] text-[#f6b834]">
+            <span>CHÍNH HÃNG 100%</span>
           </div>
         </div>
       </div>
@@ -70,53 +56,30 @@ export function Header() {
             </span>
             <input
               type="text"
-              placeholder="Tìm kiếm sản phẩm, thương hiệu (Rare Beauty, Lip, Serum)..."
+              placeholder="Tìm kiếm mỹ phẩm, son môi, kem dưỡng, serum..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#f2f2f2] hover:bg-[#e8e8e8] focus:bg-white text-sm rounded-full pl-10 pr-28 py-2.5 outline-none border border-transparent focus:border-black transition-all placeholder:text-gray-500"
+              className="w-full bg-[#f2f2f2] hover:bg-[#e8e8e8] focus:bg-white text-sm rounded-full pl-10 pr-10 py-2.5 outline-none border border-transparent focus:border-black transition-all placeholder:text-gray-500"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-24 text-gray-400 hover:text-black p-1"
+                className="absolute right-3 text-gray-400 hover:text-black p-1 cursor-pointer"
               >
                 <CloseIcon className="w-3.5 h-3.5" />
               </button>
             )}
-            <button
-              type="button"
-              onClick={() => setShowAiChatModal(true)}
-              className="absolute right-1.5 flex items-center gap-1 bg-white hover:bg-gray-50 text-[11px] font-bold text-gray-900 px-2.5 py-1 rounded-full border border-gray-200 shadow-xs cursor-pointer"
-            >
-              <AiBeautyIcon className="w-3.5 h-3.5 text-black" />
-              <span>AI Beauty</span>
-              <span className="bg-[#810017] text-[9px] text-white px-1 rounded-xs font-semibold">NEW</span>
-            </button>
           </form>
         </div>
 
         {/* Actions / Utilities (Desktop) */}
         <div className="hidden lg:flex items-center gap-6 text-xs font-medium shrink-0">
-          {/* Store Locator */}
-          <button
-            type="button"
-            onClick={() => setShowStoreModal(true)}
-            className="flex items-center gap-2.5 hover:opacity-75 transition-opacity text-left group cursor-pointer"
-          >
-            <StoreIcon className="w-6 h-6 text-black shrink-0" />
+          {/* My Orders */}
+          <Link to="/my-orders" className="flex items-center gap-2 hover:opacity-75 transition-opacity">
             <div className="leading-tight">
-              <span className="block font-bold text-xs">{selectedStore?.name || 'Chọn Cửa hàng'}</span>
-              <span className="text-[11px] text-gray-500 group-hover:underline">{selectedStore?.city || 'Tìm điểm nhận gần nhất'}</span>
-            </div>
-          </button>
-
-          {/* Offers */}
-          <Link to="/offers" className="flex items-center gap-2 hover:opacity-75 transition-opacity">
-            <ServicesIcon className="w-6 h-6 text-black shrink-0" />
-            <div className="leading-tight">
-              <span className="block font-bold text-xs">Ưu đãi</span>
-              <span className="text-[11px] text-gray-500">& Quà tặng</span>
+              <span className="block font-bold text-xs">Đơn mua</span>
+              <span className="text-[11px] text-gray-500">Tra cứu đơn</span>
             </div>
           </Link>
 
@@ -139,22 +102,11 @@ export function Header() {
                 {currentUser ? (
                   <div>
                     <div className="font-bold text-sm text-black">{currentUser.fullName}</div>
-                    <div className="text-[11px] text-gray-500 mb-2">@{currentUser.username}</div>
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-neutral-100 text-[11px] font-bold mb-3">
-                      <span className="text-[#810017]">{currentUser.loyaltyTier}</span>
-                      <span>•</span>
-                      <span>{formatPoints(currentUser.pointsBalance)}</span>
-                    </div>
+                    <div className="text-[11px] text-gray-500 mb-3">@{currentUser.username} • {currentUser.role === 'ADMIN' ? 'Quản trị viên' : 'Khách hàng'}</div>
 
                     <div className="border-t border-gray-100 pt-3 space-y-2 text-xs">
                       <Link to="/my-orders" className="block hover:underline font-medium" onClick={() => setShowSignInDropdown(false)}>
-                        📦 Đơn hàng của tôi
-                      </Link>
-                      <Link to="/loves" className="block hover:underline font-medium" onClick={() => setShowSignInDropdown(false)}>
-                        ❤️ Mục yêu thích ({lovedSkuIds.size})
-                      </Link>
-                      <Link to="/offers" className="block hover:underline font-medium" onClick={() => setShowSignInDropdown(false)}>
-                        🎁 Beauty Insider Rewards
+                        📦 Đơn mua của tôi
                       </Link>
                       {currentUser.role === 'ADMIN' && (
                         <Link to="/admin" className="block font-bold text-[#810017] hover:underline" onClick={() => setShowSignInDropdown(false)}>
@@ -177,7 +129,7 @@ export function Header() {
                 ) : (
                   <div>
                     <div className="font-bold text-sm mb-1 text-black">Chào mừng đến với Sephora ✨</div>
-                    <div className="text-xs text-gray-500 mb-3">Đăng nhập để nhận tích điểm Beauty Insider và ưu đãi độc quyền.</div>
+                    <div className="text-xs text-gray-500 mb-3">Đăng nhập để đặt hàng và theo dõi đơn mua thuận tiện hơn.</div>
                     <Link
                       to="/login"
                       className="block text-center w-full bg-black text-white font-bold py-2 rounded-full text-xs hover:bg-neutral-800 transition-colors mb-2"
@@ -199,21 +151,13 @@ export function Header() {
           </div>
         </div>
 
-        {/* Loves & Basket Icons */}
+        {/* Basket Icon */}
         <div className="flex items-center gap-4 shrink-0">
-          <Link to="/loves" className="relative p-1 hover:opacity-75 transition-opacity" aria-label="Favorites">
-            <HeartIcon className="w-6 h-6 text-black" filled={lovedSkuIds.size > 0} />
-            {lovedSkuIds.size > 0 && (
-              <span className="absolute -top-1 -right-1 bg-black text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                {lovedSkuIds.size}
-              </span>
-            )}
-          </Link>
-
-          <Link to="/basket" className="relative p-1 hover:opacity-75 transition-opacity" aria-label="Shopping Basket">
+          <Link to="/basket" className="relative p-1.5 hover:opacity-75 transition-opacity flex items-center gap-1.5" aria-label="Giỏ hàng">
             <BasketIcon className="w-6 h-6 text-black" />
+            <span className="hidden sm:inline font-bold text-xs">Giỏ hàng</span>
             {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-[#810017] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+              <span className="bg-[#810017] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                 {cartCount}
               </span>
             )}
@@ -232,16 +176,8 @@ export function Header() {
             placeholder="Tìm sản phẩm, thương hiệu..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#f2f2f2] text-sm rounded-full pl-9 pr-20 py-2 outline-none border border-transparent focus:border-black"
+            className="w-full bg-[#f2f2f2] text-sm rounded-full pl-9 pr-4 py-2 outline-none border border-transparent focus:border-black"
           />
-          <button
-            type="button"
-            onClick={() => setShowAiChatModal(true)}
-            className="absolute right-1.5 flex items-center gap-1 bg-white text-[10px] font-bold px-2.5 py-1 rounded-full border border-gray-200"
-          >
-            <AiBeautyIcon className="w-3 h-3" />
-            <span>AI</span>
-          </button>
         </form>
       </div>
 
@@ -345,15 +281,6 @@ export function Header() {
 
       {/* Mobile Category Horizontal Scroll */}
       <div className="md:hidden border-t border-gray-100 bg-white px-3 py-2 overflow-x-auto no-scrollbar flex items-center gap-2">
-        <button
-          type="button"
-          onClick={() => setShowStoreModal(true)}
-          className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-300 text-xs font-bold text-gray-800 bg-gray-50 whitespace-nowrap"
-        >
-          <StoreIcon className="w-3.5 h-3.5" />
-          <span>{selectedStore?.name ? selectedStore.name.slice(0, 15) : 'Cửa hàng'}</span>
-        </button>
-
         {categories.slice(0, 8).map((cat) => (
           <Link
             key={cat.id}
@@ -372,9 +299,7 @@ export function Header() {
 export function Footer() {
   const { homeData, setShowInternationalModal, addToast } = useStore();
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
   const [submittingEmail, setSubmittingEmail] = useState(false);
-  const [submittingPhone, setSubmittingPhone] = useState(false);
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -395,25 +320,6 @@ export function Footer() {
     }
   };
 
-  const handlePhoneSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!phone.trim() || submittingPhone) return;
-    setSubmittingPhone(true);
-    try {
-      const res = await storefrontApi.subscribe('SMS', phone.trim());
-      if (res.success) {
-        addToast(res.data.alreadySubscribed ? 'Số điện thoại của bạn đã đăng ký trước đó!' : 'Đăng ký nhận tin nhắn khuyến mãi thành công! 📱', 'success');
-        setPhone('');
-      } else {
-        addToast(res.message || 'Lỗi đăng ký SMS', 'error');
-      }
-    } catch {
-      addToast('Không thể kết nối đến máy chủ', 'error');
-    } finally {
-      setSubmittingPhone(false);
-    }
-  };
-
   const footerCols = homeData?.footerColumns || [];
 
   return (
@@ -428,106 +334,96 @@ export function Footer() {
       {/* 2. Five Service Highlights Bar */}
       <div className="border-b border-neutral-800 py-6 px-4">
         <div className="max-w-[1280px] mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 text-xs text-left">
-          <Link to="/offers" className="flex items-center gap-3 hover:text-gray-300 transition-colors">
-            <StoreIcon className="w-6 h-6 text-white shrink-0" />
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🚚</span>
             <div>
-              <div className="font-bold">Hệ thống Cửa hàng</div>
-              <div className="text-[11px] text-gray-400">Chọn cửa hàng gần bạn</div>
+              <div className="font-bold">Miễn phí vận chuyển</div>
+              <div className="text-[11px] text-gray-400">Giao hàng toàn quốc</div>
             </div>
-          </Link>
-          <Link to="/offers" className="flex items-center gap-3 hover:text-gray-300 transition-colors">
-            <ChatIcon className="w-6 h-6 text-white shrink-0" />
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">✨</span>
             <div>
-              <div className="font-bold">Trợ lý Trực tuyến</div>
-              <div className="text-[11px] text-gray-400">Tư vấn làm đẹp 24/7</div>
+              <div className="font-bold">100% Chính hãng</div>
+              <div className="text-[11px] text-gray-400">Cam kết nguồn gốc rõ ràng</div>
             </div>
-          </Link>
-          <Link to="/offers" className="flex items-center gap-3 hover:text-gray-300 transition-colors">
-            <AppIcon className="w-6 h-6 text-white shrink-0" />
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🔄</span>
             <div>
-              <div className="font-bold">Ứng dụng Sephora</div>
-              <div className="text-[11px] text-gray-400">Tải ngay trên iOS & Android</div>
+              <div className="font-bold">Đổi trả trong 7 ngày</div>
+              <div className="text-[11px] text-gray-400">Thủ tục nhanh gọn, dễ dàng</div>
             </div>
-          </Link>
-          <Link to="/offers" className="flex items-center gap-3 hover:text-gray-300 transition-colors">
-            <SmsIcon className="w-6 h-6 text-white shrink-0" />
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">💵</span>
             <div>
-              <div className="font-bold">Nhận Tin khuyến mãi</div>
-              <div className="text-[11px] text-gray-400">Cập nhật qua SMS</div>
+              <div className="font-bold">Thanh toán khi nhận hàng</div>
+              <div className="text-[11px] text-gray-400">Đồng kiểm hàng trước khi trả</div>
             </div>
-          </Link>
-          <Link to="/offers" className="flex items-center gap-3 hover:text-gray-300 transition-colors col-span-2 sm:col-span-1">
-            <CreditCardIcon className="w-6 h-6 text-white shrink-0" />
+          </div>
+          <div className="flex items-center gap-3 col-span-2 sm:col-span-1">
+            <span className="text-2xl">💬</span>
             <div>
-              <div className="font-bold">Thẻ Sephora Insider</div>
-              <div className="text-[11px] text-gray-400">Tích điểm đổi quà</div>
+              <div className="font-bold">Tư vấn tận tình</div>
+              <div className="text-[11px] text-gray-400">Hỗ trợ chăm sóc 24/7</div>
             </div>
-          </Link>
+          </div>
         </div>
       </div>
 
       {/* 3. Link Columns & Subscriptions */}
       <div className="max-w-[1280px] mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 text-left">
-          {footerCols.map((col, idx) => (
-            <div key={idx}>
-              <h3 className="font-bold text-sm text-white mb-4 tracking-tight">{col.title}</h3>
-              <ul className="space-y-2 text-xs text-gray-300">
-                {col.links?.map((link, lIdx) => (
-                  <li key={lIdx}>
-                    <Link to={link.href.startsWith('/') ? link.href : '/offers'} className="hover:underline hover:text-white transition-colors">
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <div>
+            <h3 className="font-bold text-sm text-white mb-4 tracking-tight">Về Sephora</h3>
+            <ul className="space-y-2 text-xs text-gray-300">
+              <li><Link to="/" className="hover:underline hover:text-white transition-colors">Giới thiệu thương hiệu</Link></li>
+              <li><Link to="/" className="hover:underline hover:text-white transition-colors">Cam kết chính hãng 100%</Link></li>
+              <li><Link to="/" className="hover:underline hover:text-white transition-colors">Hệ thống phân phối</Link></li>
+              <li><Link to="/" className="hover:underline hover:text-white transition-colors">Tuyển dụng nhân tài</Link></li>
+              <li><Link to="/offers" className="hover:underline hover:text-white transition-colors">Tin tức & Sự kiện làm đẹp</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-bold text-sm text-white mb-4 tracking-tight">Hỗ trợ khách hàng</h3>
+            <ul className="space-y-2 text-xs text-gray-300">
+              <li><Link to="/my-orders" className="hover:underline hover:text-white transition-colors">Tra cứu đơn hàng</Link></li>
+              <li><Link to="/" className="hover:underline hover:text-white transition-colors">Hướng dẫn đặt mua online</Link></li>
+              <li><Link to="/" className="hover:underline hover:text-white transition-colors">Chính sách giao hàng toàn quốc</Link></li>
+              <li><Link to="/" className="hover:underline hover:text-white transition-colors">Chính sách đổi trả & hoàn tiền</Link></li>
+              <li><Link to="/" className="hover:underline hover:text-white transition-colors">Câu hỏi thường gặp (FAQ)</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-bold text-sm text-white mb-4 tracking-tight">Chính sách & Quy định</h3>
+            <ul className="space-y-2 text-xs text-gray-300">
+              <li><Link to="/" className="hover:underline hover:text-white transition-colors">Quy chế hoạt động</Link></li>
+              <li><Link to="/" className="hover:underline hover:text-white transition-colors">Điều khoản dịch vụ</Link></li>
+              <li><Link to="/" className="hover:underline hover:text-white transition-colors">Chính sách bảo mật thông tin</Link></li>
+              <li><Link to="/" className="hover:underline hover:text-white transition-colors">Chính sách kiểm hàng & bồi thường</Link></li>
+            </ul>
+          </div>
 
           {/* Region & Sign Up Column */}
           <div>
-            <h3 className="font-bold text-sm text-white mb-4 tracking-tight">Khu vực & Ngôn ngữ</h3>
-            <button
-              type="button"
-              onClick={() => setShowInternationalModal(true)}
-              className="flex items-center gap-2 text-xs text-gray-300 hover:text-white mb-6 cursor-pointer"
-            >
-              <span className="text-base">🇻🇳</span>
-              <span className="font-semibold text-white underline">Việt Nam - Tiếng Việt / English</span>
-            </button>
-
-            {/* SMS Form */}
-            <div className="mb-5">
-              <label className="block text-xs font-semibold text-gray-300 mb-1.5">
-                Đăng ký nhận SMS ưu đãi Sephora
-              </label>
-              <form onSubmit={handlePhoneSubmit} className="flex gap-2">
-                <input
-                  type="tel"
-                  placeholder="Số điện thoại di động..."
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="flex-1 bg-white text-black px-3 py-2 rounded-lg text-xs outline-none"
-                />
-                <button
-                  type="submit"
-                  disabled={submittingPhone}
-                  className="bg-transparent border border-white text-white px-3 py-2 rounded-full text-xs font-bold hover:bg-white hover:text-black transition-colors cursor-pointer"
-                >
-                  Gửi
-                </button>
-              </form>
+            <h3 className="font-bold text-sm text-white mb-4 tracking-tight">Liên hệ & Nhận ưu đãi</h3>
+            <div className="text-xs text-gray-300 mb-4 space-y-1">
+              <div>Tổng đài hỗ trợ: <span className="font-bold text-white">1900 8888</span> (8h00 - 21h00)</div>
+              <div>Email: <span className="font-bold text-white">hotro@sephora.vn</span></div>
             </div>
 
             {/* Email Form */}
             <div>
               <label className="block text-xs font-semibold text-gray-300 mb-1.5">
-                Đăng ký nhận Bản tin làm đẹp
+                Đăng ký nhận khuyến mãi sớm nhất
               </label>
               <form onSubmit={handleEmailSubmit} className="flex gap-2">
                 <input
                   type="email"
-                  placeholder="Nhập địa chỉ email..."
+                  placeholder="Nhập email của bạn..."
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="flex-1 bg-white text-black px-3 py-2 rounded-lg text-xs outline-none"
@@ -549,8 +445,8 @@ export function Footer() {
       <div className="border-t border-neutral-800 py-6 px-4 text-xs text-gray-400">
         <div className="max-w-[1280px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="text-center md:text-left text-[11px] space-y-1">
-            <div>© 2026 Sephora Oracle Full-Stack System. Thiết kế theo kiến trúc chuẩn room-book.</div>
-            <div className="text-gray-500">Kết nối trực tiếp Oracle Database 23ai FREEPDB1 tại 58.186.149.175:32012</div>
+            <div>© 2026 Sephora Oracle Full-Stack System. Thiết kế theo chuẩn đồ án Oracle Database.</div>
+            <div className="text-gray-500">Kết nối trực tiếp Oracle Database 23ai FREEPDB1 (PL/SQL, Trigger, View, ACID Transactions)</div>
           </div>
           <div className="flex items-center gap-4 text-xs">
             <Link to="/offers" className="hover:underline">Điều khoản sử dụng</Link>
@@ -564,7 +460,7 @@ export function Footer() {
 }
 
 export function MobileBottomNav() {
-  const { setShowStoreModal, setShowAiChatModal } = useStore();
+  const { cartCount, currentUser } = useStore();
 
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 px-4 py-2 flex items-center justify-around text-[10px] font-bold text-gray-700 shadow-lg">
@@ -576,18 +472,23 @@ export function MobileBottomNav() {
         <span className="text-base">💄</span>
         <span>Sản phẩm</span>
       </Link>
-      <Link to="/offers" className="flex flex-col items-center gap-1 hover:text-black">
-        <span className="text-base">🎁</span>
-        <span>Ưu đãi</span>
+      <Link to="/my-orders" className="flex flex-col items-center gap-1 hover:text-black">
+        <span className="text-base">📦</span>
+        <span>Đơn mua</span>
       </Link>
-      <button onClick={() => setShowStoreModal(true)} className="flex flex-col items-center gap-1 hover:text-black">
-        <span className="text-base">🏬</span>
-        <span>Cửa hàng</span>
-      </button>
-      <button onClick={() => setShowAiChatModal(true)} className="flex flex-col items-center gap-1 text-[#810017]">
-        <span className="text-base">✨</span>
-        <span>AI Beauty</span>
-      </button>
+      <Link to="/basket" className="flex flex-col items-center gap-1 hover:text-black relative">
+        <span className="text-base">🛍️</span>
+        <span>Giỏ hàng</span>
+        {cartCount > 0 && (
+          <span className="absolute -top-1 right-2 bg-[#810017] text-white text-[9px] w-3.5 h-3.5 rounded-full flex items-center justify-center font-bold">
+            {cartCount}
+          </span>
+        )}
+      </Link>
+      <Link to={currentUser ? '/my-orders' : '/login'} className="flex flex-col items-center gap-1 hover:text-black">
+        <span className="text-base">👤</span>
+        <span>{currentUser ? 'Tôi' : 'Tài khoản'}</span>
+      </Link>
     </div>
   );
 }

@@ -91,14 +91,14 @@ export default function AdminProductsPage() {
       if (editingProduct) {
         const res = await adminApi.updateProduct(editingProduct.dbId, payload);
         if (res.success) {
-          addToast('Cập nhật sản phẩm thành công trên Oracle!', 'success');
+          addToast('Cập nhật thông tin sản phẩm thành công!', 'success');
         } else {
           addToast(res.message || 'Lỗi khi cập nhật sản phẩm', 'error');
         }
       } else {
         const res = await adminApi.createProduct(payload);
         if (res.success) {
-          addToast('Thêm mới sản phẩm thành công vào Oracle!', 'success');
+          addToast('Thêm mới sản phẩm thành công!', 'success');
         } else {
           addToast(res.message || 'Lỗi khi tạo sản phẩm', 'error');
         }
@@ -108,18 +108,18 @@ export default function AdminProductsPage() {
       await fetchProducts();
       await refreshHome();
     } catch {
-      addToast('Không thể lưu sản phẩm', 'error');
+      addToast('Không thể lưu thông tin sản phẩm', 'error');
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async (p: Product) => {
-    if (!window.confirm(`Bạn có chắc chắn muốn xóa sản phẩm "${p.name}" (SKU: ${p.skuId}) không?`)) return;
+    if (!window.confirm(`Bạn có chắc chắn muốn xóa sản phẩm "${p.name}" (Mã SKU: ${p.skuId}) không?`)) return;
     try {
       const res = await adminApi.deleteProduct(p.dbId);
       if (res.success) {
-        addToast(`Đã xóa sản phẩm ${p.skuId} khỏi Oracle`, 'info');
+        addToast(`Đã xóa sản phẩm ${p.skuId} thành công`, 'info');
         await fetchProducts();
         await refreshHome();
       } else {
@@ -149,14 +149,14 @@ export default function AdminProductsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-200 pb-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-gray-900 tracking-tight">Quản lý Sản phẩm</h1>
-          <p className="text-xs text-gray-500 mt-1">Tổng cộng {products.length} sản phẩm lưu trữ trên bảng sep_products của Oracle</p>
+          <p className="text-xs text-gray-500 mt-1">Quản lý danh sách {products.length} mặt hàng mỹ phẩm và theo dõi số lượng tồn kho</p>
         </div>
         <button
           onClick={openCreateModal}
           className="inline-flex items-center gap-2 bg-[#810017] hover:bg-[#6b0013] text-white font-bold text-xs px-5 py-2.5 rounded-full transition-colors cursor-pointer shadow-xs"
         >
           <Plus className="w-4 h-4" />
-          <span>Thêm Sản phẩm mới</span>
+          <span>Thêm sản phẩm mới</span>
         </button>
       </div>
 
@@ -242,7 +242,7 @@ export default function AdminProductsPage() {
                       <div className="flex flex-wrap gap-1">
                         {p.collections?.map((c) => (
                           <span key={c} className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200">
-                            {c === 'CHOSEN_FOR_YOU' ? 'Chosen' : c === 'JUST_DROPPED' ? 'New' : 'Selling'}
+                            {c === 'CHOSEN_FOR_YOU' ? 'Gợi ý' : c === 'JUST_DROPPED' ? 'Mới về' : 'Bán chạy'}
                           </span>
                         )) || '—'}
                       </div>
@@ -278,7 +278,7 @@ export default function AdminProductsPage() {
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
           <div className="bg-white rounded-2xl max-w-lg w-full p-6 relative shadow-2xl overflow-y-auto max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
             <h2 className="text-base font-extrabold text-black mb-4 border-b border-gray-100 pb-2">
-              {editingProduct ? `Chỉnh sửa sản phẩm: ${editingProduct.skuId}` : 'Thêm mới Sản phẩm vào Oracle'}
+              {editingProduct ? `Chỉnh sửa sản phẩm: ${editingProduct.skuId}` : 'Thêm sản phẩm mới'}
             </h2>
 
             <form onSubmit={handleSave} className="space-y-3 text-xs">

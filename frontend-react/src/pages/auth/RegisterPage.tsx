@@ -48,8 +48,8 @@ export default function RegisterPage() {
           <Link to="/" className="inline-block mb-3">
             <SephoraLogo className="h-5 w-auto mx-auto text-black" />
           </Link>
-          <h1 className="text-xl font-extrabold text-black tracking-tight">Tạo tài khoản Beauty Insider</h1>
-          <p className="text-xs text-gray-500 mt-1">Gia nhập cộng đồng làm đẹp & nhận ngay 100 điểm thưởng chào mừng</p>
+          <h1 className="text-xl font-extrabold text-black tracking-tight">Đăng ký tài khoản</h1>
+          <p className="text-xs text-gray-500 mt-1">Tạo tài khoản để theo dõi đơn mua và đặt hàng nhanh chóng hơn</p>
         </div>
 
         {errorMsg && (

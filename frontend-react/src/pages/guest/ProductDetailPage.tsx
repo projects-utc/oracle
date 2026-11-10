@@ -114,14 +114,14 @@ export function ProductDetailPage() {
             </div>
           )}
 
-          {/* Store Pickup Notice */}
-          <div className="flex items-center gap-3 p-3.5 bg-neutral-50 rounded-xl border border-gray-200 mb-6 text-xs">
-            <StoreIcon className="w-5 h-5 text-black shrink-0" />
-            <div>
-              <div className="font-bold text-black">{selectedStore?.name || 'Nhận hàng tại cửa hàng Sephora'}</div>
-              <div className="text-[11px] text-gray-500">
-                {p.stockQty > 0 ? `Còn hàng sẵn tại ${selectedStore?.city || 'cửa hàng gần bạn'}` : 'Tạm thời hết hàng tại cửa hàng này'}
-              </div>
+          {/* Service Commitment Notice */}
+          <div className="p-3.5 bg-neutral-50 rounded-xl border border-gray-200 mb-6 text-xs text-gray-700 space-y-1">
+            <div className="font-bold text-black flex items-center gap-1.5">
+              <span>🛡️</span>
+              <span>Chính sách mua sắm an tâm</span>
+            </div>
+            <div className="text-[11px] text-gray-500">
+              Cam kết 100% chính hãng • Miễn phí vận chuyển toàn quốc • Hỗ trợ đổi trả trong 7 ngày nếu lỗi nhà sản xuất.
             </div>
           </div>
 
@@ -145,30 +145,20 @@ export function ProductDetailPage() {
               </button>
             </div>
             <div className="text-xs text-gray-500">
-              Tồn kho Oracle: <span className="font-bold text-black">{p.stockQty} sản phẩm</span>
+              Còn lại trong kho: <span className="font-bold text-black">{p.stockQty} sản phẩm</span>
             </div>
           </div>
 
-          {/* Add to Basket & Love Buttons */}
+          {/* Add to Basket Button */}
           <div className="flex items-center gap-3">
             <button
               onClick={handleAdd}
               disabled={p.stockQty <= 0}
-              className={`flex-1 py-3.5 px-6 rounded-full text-xs font-bold transition-all shadow-md cursor-pointer disabled:opacity-40 ${
+              className={`w-full py-4 px-6 rounded-full text-xs font-bold transition-all shadow-md cursor-pointer disabled:opacity-40 ${
                 added ? 'bg-emerald-700 text-white' : 'bg-black text-white hover:bg-neutral-800'
               }`}
             >
-              {p.stockQty <= 0 ? 'Tạm hết hàng' : added ? 'Đã thêm vào giỏ hàng ✓' : `Thêm vào giỏ hàng • ${(p.priceValue * quantity).toFixed(2)}$`}
-            </button>
-
-            <button
-              onClick={() => toggleLove(p.skuId)}
-              aria-label="Toggle Love"
-              className={`w-12 h-12 rounded-full border flex items-center justify-center transition-all cursor-pointer ${
-                isLoved ? 'border-black bg-black text-white' : 'border-gray-300 bg-white hover:border-black text-black'
-              }`}
-            >
-              <HeartIcon className="w-5 h-5 fill-current" filled={isLoved} />
+              {p.stockQty <= 0 ? 'Tạm thời hết hàng' : added ? 'Đã thêm vào giỏ hàng ✓' : `Thêm vào giỏ hàng • $${(p.priceValue * quantity).toFixed(2)}`}
             </button>
           </div>
         </div>
