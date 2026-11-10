@@ -3,6 +3,7 @@ import { authApi } from '../api/authApi';
 import { storefrontApi } from '../api/storefrontApi';
 import { shoppingApi } from '../api/shoppingApi';
 import { CartItem, HomeStorefrontData, Product, StoreLocation, User } from '../data';
+import { localizeProduct, localizeProducts } from '../utils/productLocalization';
 
 export interface ToastMessage {
   id: number;
@@ -76,7 +77,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     try {
       const res = await storefrontApi.getHome();
       if (res.success && res.data) {
-        setHomeData(res.data);
+        setHomeData({
+          ...res.data,
+          chosenForYou: localizeProducts(res.data.chosenForYou),
+          justDropped: localizeProducts(res.data.justDropped),
+          sellingFast: localizeProducts(res.data.sellingFast),
+        });
       } else {
         addToast(res.message || 'Không thể tải dữ liệu trang chủ', 'error');
       }
@@ -98,11 +104,16 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         shoppingApi.getCart(),
       ]);
       if (favRes.success && favRes.data) {
-        setFavorites(favRes.data);
-        setLovedSkuIds(new Set(favRes.data.map((p) => p.skuId)));
+        const locFavs = localizeProducts(favRes.data);
+        setFavorites(locFavs);
+        setLovedSkuIds(new Set(locFavs.map((p) => p.skuId)));
       }
       if (cartRes.success && cartRes.data) {
-        setCartItems(cartRes.data.items || []);
+        const locItems = (cartRes.data.items || []).map((ci) => ({
+          ...ci,
+          product: localizeProduct(ci.product),
+        }));
+        setCartItems(locItems);
       } else {
         setCartItems([]);
       }
@@ -229,28 +240,33 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const addToCart = useCallback(
     async (product: Product, quantity = 1) => {
+      const p = localizeProduct(product);
       if (!currentUser) {
         // Guest cart in localStorage
         setCartItems((prev) => {
-          const existing = prev.find((i) => i.skuId === product.skuId);
+          const existing = prev.find((i) => i.skuId === p.skuId);
           let next: CartItem[];
           if (existing) {
-            next = prev.map((i) => (i.skuId === product.skuId ? { ...i, quantity: i.quantity + quantity, lineTotal: (i.quantity + quantity) * product.priceValue } : i));
+            next = prev.map((i) => (i.skuId === p.skuId ? { ...i, quantity: i.quantity + quantity, lineTotal: (i.quantity + quantity) * p.priceValue } : i));
           } else {
-            next = [...prev, { id: Date.now(), skuId: product.skuId, product, quantity, lineTotal: quantity * product.priceValue }];
+            next = [...prev, { id: Date.now(), skuId: p.skuId, product: p, quantity, lineTotal: quantity * p.priceValue }];
           }
           localStorage.setItem(GUEST_CART_KEY, JSON.stringify(next));
           return next;
         });
-        addToast(`Đã thêm ${product.name} vào giỏ hàng ✓`, 'success');
+        addToast(`Đã thêm ${p.name} vào giỏ hàng ✓`, 'success');
         return;
       }
 
       try {
-        const res = await shoppingApi.addToCart(product.skuId, quantity);
+        const res = await shoppingApi.addToCart(p.skuId, quantity);
         if (res.success && res.data) {
-          setCartItems(res.data.items || []);
-          addToast(`Đã thêm ${product.name} vào giỏ hàng ✓`, 'success');
+          const locItems = (res.data.items || []).map((ci) => ({
+            ...ci,
+            product: localizeProduct(ci.product),
+          }));
+          setCartItems(locItems);
+          addToast(`Đã thêm ${p.name} vào giỏ hàng ✓`, 'success');
         } else {
           addToast(res.message || 'Không thể thêm vào giỏ hàng', 'error');
         }

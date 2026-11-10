@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useStore } from '../contexts/StoreContext';
 import { storefrontApi } from '../api/storefrontApi';
+import { CORE_VIETNAMESE_CATEGORIES } from '../constants';
 import {
   SephoraLogo,
   SearchIcon,
@@ -12,7 +13,7 @@ import {
 } from './sephora/icons';
 
 export function Header() {
-  const { currentUser, logout, homeData, cartCount } = useStore();
+  const { currentUser, logout, cartCount } = useStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [showSignInDropdown, setShowSignInDropdown] = useState(false);
@@ -25,7 +26,7 @@ export function Header() {
     }
   };
 
-  const categories = homeData?.categories || [];
+  const categories = CORE_VIETNAMESE_CATEGORIES;
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white font-sans text-black border-b border-gray-100 shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
@@ -195,8 +196,8 @@ export function Header() {
                 className="relative py-1 cursor-pointer"
               >
                 <Link
-                  to={`/shop/${category.slug}`}
-                  className={`px-2 py-1 font-medium hover:text-white/80 transition-colors flex items-center gap-1 whitespace-nowrap ${
+                  to={category.slug === 'offers' ? '/offers' : `/shop/${category.slug}`}
+                  className={`px-3 py-1 font-semibold hover:text-white/80 transition-colors flex items-center gap-1 whitespace-nowrap ${
                     activeMenu === category.id ? 'text-white underline underline-offset-4 decoration-2' : 'text-white/95'
                   }`}
                 >
@@ -281,10 +282,10 @@ export function Header() {
 
       {/* Mobile Category Horizontal Scroll */}
       <div className="md:hidden border-t border-gray-100 bg-white px-3 py-2 overflow-x-auto no-scrollbar flex items-center gap-2">
-        {categories.slice(0, 8).map((cat) => (
+        {categories.map((cat) => (
           <Link
             key={cat.id}
-            to={`/shop/${cat.slug}`}
+            to={cat.slug === 'offers' ? '/offers' : `/shop/${cat.slug}`}
             className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-full border border-gray-200 text-xs font-medium text-gray-800 whitespace-nowrap bg-white hover:border-black"
           >
             {cat.hasSparkle && <SparkleIcon className="w-2.5 h-2.5 text-[#d6b672]" />}

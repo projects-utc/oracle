@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { adminApi, AdminDashboardData } from '../../api/adminApi';
-import { formatUSD, formatOrderStatus } from '../../constants';
+import { formatVND, formatOrderStatus } from '../../constants';
 import {
   DollarSign,
   ShoppingBag,
@@ -71,7 +71,7 @@ export default function AdminDashboardPage() {
             <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Tổng doanh thu</span>
             <DollarSign className="w-4 h-4 text-emerald-600" />
           </div>
-          <div className="text-2xl font-extrabold text-gray-900 tracking-tight">{formatUSD(data.totalRevenue)}</div>
+          <div className="text-2xl font-extrabold text-gray-900 tracking-tight">{formatVND(data.totalRevenue)}</div>
           <div className="text-[11px] text-gray-400 mt-1">Từ các đơn hoàn thành</div>
         </div>
 
@@ -123,7 +123,7 @@ export default function AdminDashboardPage() {
                     <div className="text-[11px] text-gray-500">{o.shippingName} • {new Date(o.createdAt).toLocaleDateString('vi-VN')}</div>
                   </div>
                   <div className="text-right">
-                    <div className="font-bold text-black">{formatUSD(o.totalAmount)}</div>
+                    <div className="font-bold text-black">{formatVND(o.totalAmount)}</div>
                     <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold mt-1 ${
                       o.orderStatus === 'COMPLETED'
                         ? 'bg-emerald-100 text-emerald-800'

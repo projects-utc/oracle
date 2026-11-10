@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { adminApi } from '../../api/adminApi';
 import { Product } from '../../data';
 import { useStore } from '../../contexts/StoreContext';
-import { formatUSD } from '../../constants';
+import { formatVND } from '../../constants';
+import { localizeProduct } from '../../utils/productLocalization';
 import { Plus, Search, Edit2, Trash2 } from 'lucide-react';
 
 export default function AdminProductsPage() {
@@ -212,61 +213,64 @@ export default function AdminProductsPage() {
                   <td colSpan={7} className="py-12 text-center text-gray-400">Không tìm thấy sản phẩm nào</td>
                 </tr>
               ) : (
-                filtered.map((p) => (
-                  <tr key={p.skuId} className="hover:bg-gray-50/80 transition-colors">
-                    <td className="py-3 px-4">
-                      <div className="flex items-center gap-3">
-                        <img src={p.image} alt={p.name} className="w-10 h-10 object-contain rounded-md bg-gray-50 p-1 border border-gray-100 shrink-0" />
-                        <div className="min-w-0 max-w-xs">
-                          <div className="text-[10px] font-bold uppercase text-gray-500 truncate">{p.brand}</div>
-                          <div className="font-semibold text-gray-900 truncate">{p.name}</div>
+                filtered.map((item) => {
+                  const p = localizeProduct(item);
+                  return (
+                    <tr key={p.skuId} className="hover:bg-gray-50/80 transition-colors">
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-3">
+                          <img src={p.image} alt={p.name} className="w-10 h-10 object-contain rounded-md bg-gray-50 p-1 border border-gray-100 shrink-0" />
+                          <div className="min-w-0 max-w-xs">
+                            <div className="text-[10px] font-bold uppercase text-gray-500 truncate">{p.brand}</div>
+                            <div className="font-semibold text-gray-900 truncate">{p.name}</div>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="font-mono font-bold text-gray-800">{p.skuId}</div>
-                      <div className="text-[11px] text-gray-400 truncate">{p.variation || '—'}</div>
-                    </td>
-                    <td className="py-3 px-4">
-                      <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-neutral-100 text-neutral-800 capitalize">
-                        {p.categorySlug}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 font-bold text-gray-900">{formatUSD(p.priceValue)}</td>
-                    <td className="py-3 px-4">
-                      <span className={`font-bold ${p.stockQty <= 10 ? 'text-rose-600' : 'text-gray-900'}`}>
-                        {p.stockQty}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="flex flex-wrap gap-1">
-                        {p.collections?.map((c) => (
-                          <span key={c} className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200">
-                            {c === 'CHOSEN_FOR_YOU' ? 'Gợi ý' : c === 'JUST_DROPPED' ? 'Mới về' : 'Bán chạy'}
-                          </span>
-                        )) || '—'}
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 text-right">
-                      <div className="flex items-center justify-end gap-1">
-                        <button
-                          onClick={() => openEditModal(p)}
-                          className="p-1.5 text-gray-500 hover:text-black rounded-lg hover:bg-gray-100 cursor-pointer"
-                          title="Chỉnh sửa"
-                        >
-                          <Edit2 className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(p)}
-                          className="p-1.5 text-rose-500 hover:text-rose-700 rounded-lg hover:bg-rose-50 cursor-pointer"
-                          title="Xóa sản phẩm"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="font-mono font-bold text-gray-800">{p.skuId}</div>
+                        <div className="text-[11px] text-gray-400 truncate">{p.variation || '—'}</div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-neutral-100 text-neutral-800 capitalize">
+                          {p.categorySlug}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 font-bold text-[#810017]">{formatVND(p.priceValue)}</td>
+                      <td className="py-3 px-4">
+                        <span className={`font-bold ${p.stockQty <= 10 ? 'text-rose-600' : 'text-gray-900'}`}>
+                          {p.stockQty}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="flex flex-wrap gap-1">
+                          {p.collections?.map((c) => (
+                            <span key={c} className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200">
+                              {c === 'CHOSEN_FOR_YOU' ? 'Gợi ý' : c === 'JUST_DROPPED' ? 'Mới về' : 'Bán chạy'}
+                            </span>
+                          )) || '—'}
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <button
+                            onClick={() => openEditModal(p)}
+                            className="p-1.5 text-gray-500 hover:text-black rounded-lg hover:bg-gray-100 cursor-pointer"
+                            title="Chỉnh sửa"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(p)}
+                            className="p-1.5 text-rose-500 hover:text-rose-700 rounded-lg hover:bg-rose-50 cursor-pointer"
+                            title="Xóa sản phẩm"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
@@ -333,7 +337,7 @@ export default function AdminProductsPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block font-bold text-gray-700 mb-1">Giá bán ($) *</label>
+                  <label className="block font-bold text-gray-700 mb-1">Giá bán (USD) *</label>
                   <input
                     type="number"
                     step="0.01"

@@ -17,12 +17,19 @@ export const LOYALTY_TIERS = {
   ROUGE: 'ROUGE',
 } as const;
 
-export function formatUSD(amount: number | string | null | undefined): string {
-  if (amount == null) return '$0.00';
+export const USD_TO_VND_RATE = 25000;
+
+export function formatVND(amount: number | string | null | undefined): string {
+  if (amount == null) return '0 ₫';
   const num = typeof amount === 'string' ? parseFloat(amount.replace(/[^0-9.-]/g, '')) : amount;
-  if (isNaN(num)) return '$0.00';
-  return `$${num.toFixed(2)}`;
+  if (isNaN(num)) return '0 ₫';
+  // If the number is a raw USD amount (e.g., <= 1000), convert to VND
+  const vnd = num <= 1000 ? Math.round(num * USD_TO_VND_RATE) : Math.round(num);
+  return `${vnd.toLocaleString('vi-VN')} ₫`;
 }
+
+// Deprecated alias for formatVND to ensure smooth backward compatibility across existing calls
+export const formatUSD = formatVND;
 
 export function formatPoints(pts: number | null | undefined): string {
   if (pts == null) return '0 điểm';
@@ -99,3 +106,88 @@ export function formatCategorySlug(slug?: string): string {
         .join(' ');
   }
 }
+
+export interface NavSubcategory {
+  label: string;
+  href: string;
+}
+
+export interface NavCategory {
+  id: string;
+  slug: string;
+  label: string;
+  hasSparkle?: boolean;
+  subcategories: NavSubcategory[];
+}
+
+export const CORE_VIETNAMESE_CATEGORIES: NavCategory[] = [
+  {
+    id: 'cat-makeup',
+    slug: 'makeup',
+    label: 'Trang điểm',
+    subcategories: [
+      { label: 'Son môi & Dưỡng môi', href: '/shop/makeup' },
+      { label: 'Kem nền & Cushion', href: '/shop/makeup' },
+      { label: 'Phấn phủ & Kem lót', href: '/shop/makeup' },
+      { label: 'Má hồng & Tạo khối', href: '/shop/makeup' },
+      { label: 'Mascara & Kẻ mắt', href: '/shop/makeup' },
+    ],
+  },
+  {
+    id: 'cat-skincare',
+    slug: 'skincare',
+    label: 'Chăm sóc da',
+    subcategories: [
+      { label: 'Serum & Tinh chất', href: '/shop/skincare' },
+      { label: 'Kem dưỡng ẩm', href: '/shop/skincare' },
+      { label: 'Kem chống nắng', href: '/shop/skincare' },
+      { label: 'Sữa rửa mặt & Tẩy trang', href: '/shop/skincare' },
+      { label: 'Tẩy tế bào chết (BHA/AHA)', href: '/shop/skincare' },
+    ],
+  },
+  {
+    id: 'cat-fragrance',
+    slug: 'fragrance',
+    label: 'Nước hoa',
+    subcategories: [
+      { label: 'Nước hoa Nữ cao cấp', href: '/shop/fragrance' },
+      { label: 'Nước hoa Nam lịch lãm', href: '/shop/fragrance' },
+      { label: 'Nước hoa Unisex độc đáo', href: '/shop/fragrance' },
+      { label: 'Xịt thơm Body Mist', href: '/shop/fragrance' },
+    ],
+  },
+  {
+    id: 'cat-hair',
+    slug: 'hair',
+    label: 'Chăm sóc tóc',
+    subcategories: [
+      { label: 'Dầu gội & Dầu xả', href: '/shop/hair' },
+      { label: 'Mặt nạ & Dầu ủ tóc', href: '/shop/hair' },
+      { label: 'Tinh dầu & Serum dưỡng tóc', href: '/shop/hair' },
+      { label: 'Xịt dưỡng & Giữ nếp tóc', href: '/shop/hair' },
+    ],
+  },
+  {
+    id: 'cat-gifts',
+    slug: 'gifts-value-sets',
+    label: 'Bộ quà tặng',
+    hasSparkle: true,
+    subcategories: [
+      { label: 'Set son môi mini', href: '/shop/gifts-value-sets' },
+      { label: 'Combo chăm sóc da toàn diện', href: '/shop/gifts-value-sets' },
+      { label: 'Set nước hoa du lịch', href: '/shop/gifts-value-sets' },
+      { label: 'Hộp quà tặng sự kiện', href: '/shop/gifts-value-sets' },
+    ],
+  },
+  {
+    id: 'cat-offers',
+    slug: 'offers',
+    label: 'Khuyến mãi',
+    hasSparkle: true,
+    subcategories: [
+      { label: 'Mã giảm giá độc quyền', href: '/offers' },
+      { label: 'Quà tặng kèm theo nhãn hàng', href: '/offers' },
+      { label: 'Sản phẩm giảm giá đặc biệt', href: '/offers' },
+    ],
+  },
+];

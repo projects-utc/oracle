@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { shoppingApi } from '../../api/shoppingApi';
 import { Order } from '../../data';
 import { useStore } from '../../contexts/StoreContext';
-import { formatUSD, formatOrderStatus } from '../../constants';
+import { formatVND, formatOrderStatus } from '../../constants';
+import { PRODUCT_LOCALIZATION } from '../../utils/productLocalization';
 
 export default function MyOrdersPage() {
   const { currentUser } = useStore();
@@ -82,18 +83,21 @@ export default function MyOrdersPage() {
 
               {/* Line items */}
               <div className="space-y-2 mb-4">
-                {o.items?.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-3">
-                      <img src={item.imageUrl} alt={item.productName} className="w-10 h-10 object-contain rounded-md bg-gray-50 p-1 border border-gray-100" />
-                      <div>
-                        <div className="font-bold text-black truncate max-w-[300px]">{item.productName}</div>
-                        <div className="text-[11px] text-gray-500">Số lượng: {item.quantity} • Đơn giá: {formatUSD(item.unitPrice)}</div>
+                {o.items?.map((item) => {
+                  const localizedName = PRODUCT_LOCALIZATION[item.skuId]?.name || item.productName;
+                  return (
+                    <div key={item.id} className="flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-3">
+                        <img src={item.imageUrl} alt={localizedName} className="w-10 h-10 object-contain rounded-md bg-gray-50 p-1 border border-gray-100" />
+                        <div>
+                          <div className="font-bold text-black truncate max-w-[300px]">{localizedName}</div>
+                          <div className="text-[11px] text-gray-500">Số lượng: {item.quantity} • Đơn giá: {formatVND(item.unitPrice)}</div>
+                        </div>
                       </div>
+                      <div className="font-bold text-black">{formatVND(item.lineTotal)}</div>
                     </div>
-                    <div className="font-bold text-black">{formatUSD(item.lineTotal)}</div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               <div className="border-t border-gray-100 pt-3 flex items-center justify-between text-xs">
@@ -102,7 +106,7 @@ export default function MyOrdersPage() {
                 </div>
                 <div className="text-right">
                   <span className="text-gray-500 text-xs mr-2">Tổng tiền:</span>
-                  <span className="font-extrabold text-base text-[#810017]">{formatUSD(o.totalAmount)}</span>
+                  <span className="font-extrabold text-base text-[#810017]">{formatVND(o.totalAmount)}</span>
                 </div>
               </div>
             </div>

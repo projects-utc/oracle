@@ -4,19 +4,34 @@ import { HeroBanner } from '../../data';
 
 const BANNER_MAP: Record<string, { title: string; subtitle: string; cta: string }> = {
   'Go-Tos Only': {
-    title: 'Top Mỹ Phẩm Bán Chạy Nhất',
-    subtitle: 'Các dòng sản phẩm được yêu thích và đánh giá cao nhất.',
-    cta: 'Khám phá ngay',
+    title: 'Top Bán Chạy',
+    subtitle: 'Mỹ phẩm được yêu thích nhất',
+    cta: 'Xem ngay',
+  },
+  'Top Mỹ Phẩm Bán Chạy Nhất': {
+    title: 'Top Bán Chạy',
+    subtitle: 'Mỹ phẩm được yêu thích nhất',
+    cta: 'Xem ngay',
   },
   'Weightless Korean Sunscreen': {
-    title: 'Kem Chống Nắng Hàn Quốc',
-    subtitle: 'Bảo vệ dịu nhẹ, thẩm thấu nhanh và nâng tông tự nhiên cho làn da.',
+    title: 'Chống Nắng Hot',
+    subtitle: 'Bảo vệ & nâng tông dịu nhẹ',
+    cta: 'Mua ngay',
+  },
+  'Kem Chống Nắng Hàn Quốc': {
+    title: 'Chống Nắng Hot',
+    subtitle: 'Bảo vệ & nâng tông dịu nhẹ',
     cta: 'Mua ngay',
   },
   'Holiday Gifts Are Here': {
-    title: 'Bộ Sưu Tập Quà Tặng Mới',
-    subtitle: 'Combo mỹ phẩm chính hãng với mức giá tiết kiệm đặc biệt.',
-    cta: 'Xem chi tiết',
+    title: 'Set Quà Tặng',
+    subtitle: 'Ưu đãi giá tốt mùa lễ hội',
+    cta: 'Khám phá',
+  },
+  'Bộ Sưu Tập Quà Tặng Mới': {
+    title: 'Set Quà Tặng',
+    subtitle: 'Ưu đãi giá tốt mùa lễ hội',
+    cta: 'Khám phá',
   },
 };
 

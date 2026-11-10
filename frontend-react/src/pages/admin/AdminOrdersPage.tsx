@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { adminApi } from '../../api/adminApi';
 import { Order } from '../../data';
 import { useStore } from '../../contexts/StoreContext';
-import { formatUSD, formatOrderStatus } from '../../constants';
+import { formatVND, formatOrderStatus } from '../../constants';
+import { PRODUCT_LOCALIZATION } from '../../utils/productLocalization';
 import { Eye } from 'lucide-react';
 
 export default function AdminOrdersPage() {
@@ -108,7 +109,7 @@ export default function AdminOrdersPage() {
                       {new Date(o.createdAt).toLocaleString('vi-VN')}
                     </td>
                     <td className="py-3 px-4">
-                      <div className="font-extrabold text-black">{formatUSD(o.totalAmount)}</div>
+                      <div className="font-extrabold text-black">{formatVND(o.totalAmount)}</div>
                     </td>
                     <td className="py-3 px-4">
                       <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
@@ -164,7 +165,7 @@ export default function AdminOrdersPage() {
                 <div>
                   <div className="text-gray-400 text-[10px] font-bold">Trạng thái hiện tại:</div>
                   <div className="font-bold text-black text-sm">{formatOrderStatus(selectedOrder.orderStatus)}</div>
-                  <div className="text-[11px] text-gray-500 mt-0.5">Tổng tiền: {formatUSD(selectedOrder.totalAmount)}</div>
+                  <div className="text-[11px] text-gray-500 mt-0.5">Tổng tiền: {formatVND(selectedOrder.totalAmount)}</div>
                 </div>
               </div>
 
@@ -177,18 +178,21 @@ export default function AdminOrdersPage() {
               <div className="border-t border-gray-100 pt-3">
                 <div className="font-bold text-gray-900 mb-2">Danh sách sản phẩm trong đơn:</div>
                 <div className="space-y-2">
-                  {selectedOrder.items?.map((item) => (
-                    <div key={item.id} className="flex items-center justify-between bg-white border border-gray-100 rounded-lg p-2.5">
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <img src={item.imageUrl} alt={item.productName} className="w-10 h-10 object-contain rounded bg-gray-50 p-1" />
-                        <div className="truncate">
-                          <div className="font-semibold text-gray-900 truncate">{item.productName}</div>
-                          <div className="text-[10px] text-gray-400">Mã SKU: {item.skuId} • Số lượng: {item.quantity}</div>
+                  {selectedOrder.items?.map((item) => {
+                    const localizedName = PRODUCT_LOCALIZATION[item.skuId]?.name || item.productName;
+                    return (
+                      <div key={item.id} className="flex items-center justify-between bg-white border border-gray-100 rounded-lg p-2.5">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <img src={item.imageUrl} alt={localizedName} className="w-10 h-10 object-contain rounded bg-gray-50 p-1" />
+                          <div className="truncate">
+                            <div className="font-semibold text-gray-900 truncate">{localizedName}</div>
+                            <div className="text-[10px] text-gray-400">Mã SKU: {item.skuId} • Số lượng: {item.quantity}</div>
+                          </div>
                         </div>
+                        <div className="font-bold text-black text-right shrink-0">{formatVND(item.lineTotal)}</div>
                       </div>
-                      <div className="font-bold text-black text-right shrink-0">{formatUSD(item.lineTotal)}</div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 

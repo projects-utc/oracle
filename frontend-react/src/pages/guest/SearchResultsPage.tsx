@@ -3,6 +3,7 @@ import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { storefrontApi } from '../../api/storefrontApi';
 import { Product } from '../../data';
 import { formatCategorySlug } from '../../constants';
+import { localizeProducts } from '../../utils/productLocalization';
 import { ProductCard } from '../../components/sephora/ProductCard';
 
 export default function SearchResultsPage() {
@@ -26,7 +27,7 @@ export default function SearchResultsPage() {
       })
       .then((res) => {
         if (res.success && res.data) {
-          setProducts(res.data);
+          setProducts(localizeProducts(res.data));
         }
         setLoading(false);
       })

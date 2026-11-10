@@ -3,7 +3,9 @@ import { useParams, Link } from 'react-router-dom';
 import { storefrontApi } from '../../api/storefrontApi';
 import { ProductDetail } from '../../data';
 import { useStore } from '../../contexts/StoreContext';
-import { HeartIcon, StarIcon, StoreIcon } from '../../components/sephora/icons';
+import { formatVND, formatBadge, formatCategorySlug } from '../../constants';
+import { localizeProduct, getProductDescription } from '../../utils/productLocalization';
+import { StarIcon } from '../../components/sephora/icons';
 import { ProductCarousel } from '../../components/sephora/ProductCarousel';
 
 export function ProductDetailPage() {
@@ -52,8 +54,8 @@ export function ProductDetailPage() {
     );
   }
 
-  const p = detail.product;
-  const isLoved = lovedSkuIds.has(p.skuId);
+  const p = localizeProduct(detail.product);
+  const desc = getProductDescription(p.skuId, p.name);
 
   const handleAdd = () => {
     addToCart(p, quantity);
@@ -67,7 +69,7 @@ export function ProductDetailPage() {
       <div className="text-xs text-gray-500 mb-6 flex items-center gap-1.5">
         <Link to="/" className="hover:underline">Trang chủ</Link>
         <span>/</span>
-        <Link to={`/shop/${p.categorySlug}`} className="hover:underline capitalize">{p.categorySlug}</Link>
+        <Link to={`/shop/${p.categorySlug}`} className="hover:underline font-medium text-gray-700">{formatCategorySlug(p.categorySlug)}</Link>
         <span>/</span>
         <span className="font-semibold text-black truncate max-w-[200px]">{p.name}</span>
       </div>
@@ -84,7 +86,7 @@ export function ProductDetailPage() {
           {p.badge && (
             <div className="mb-2">
               <span className="text-[11px] font-bold uppercase tracking-wider text-black bg-[#f2f2f2] px-2 py-0.5 rounded-xs">
-                {p.badge}
+                {formatBadge(p.badge)}
               </span>
             </div>
           )}
@@ -104,7 +106,7 @@ export function ProductDetailPage() {
           </div>
 
           {/* Price */}
-          <div className="text-2xl sm:text-3xl font-extrabold text-black mb-4">{p.price}</div>
+          <div className="text-2xl sm:text-3xl font-extrabold text-[#810017] mb-4">{formatVND(p.priceValue)}</div>
 
           {/* Variation */}
           {p.variation && (
@@ -158,8 +160,19 @@ export function ProductDetailPage() {
                 added ? 'bg-emerald-700 text-white' : 'bg-black text-white hover:bg-neutral-800'
               }`}
             >
-              {p.stockQty <= 0 ? 'Tạm thời hết hàng' : added ? 'Đã thêm vào giỏ hàng ✓' : `Thêm vào giỏ hàng • $${(p.priceValue * quantity).toFixed(2)}`}
+              {p.stockQty <= 0 ? 'Tạm thời hết hàng' : added ? 'Đã thêm vào giỏ hàng ✓' : `Thêm vào giỏ hàng • ${formatVND(p.priceValue * quantity)}`}
             </button>
+          </div>
+
+          {/* Product Description */}
+          <div className="border-t border-gray-100 pt-5 mt-6 space-y-2">
+            <h3 className="font-bold text-xs uppercase tracking-wider text-black flex items-center gap-1.5">
+              <span>📋</span>
+              <span>Mô tả sản phẩm & Công dụng</span>
+            </h3>
+            <p className="text-xs text-gray-600 leading-relaxed bg-gray-50 p-4 rounded-xl border border-gray-100">
+              {desc}
+            </p>
           </div>
         </div>
       </div>

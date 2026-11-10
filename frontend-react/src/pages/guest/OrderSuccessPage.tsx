@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { shoppingApi } from '../../api/shoppingApi';
 import { Order } from '../../data';
-import { formatUSD, formatOrderStatus } from '../../constants';
+import { formatVND, formatOrderStatus } from '../../constants';
+import { PRODUCT_LOCALIZATION } from '../../utils/productLocalization';
 
 export default function OrderSuccessPage() {
   const { code } = useParams<{ code: string }>();
@@ -62,19 +63,22 @@ export default function OrderSuccessPage() {
             <div className="border-t border-gray-100 pt-3">
               <div className="font-bold text-gray-800 mb-2">Sản phẩm trong đơn ({order.items?.length || 0}):</div>
               <div className="space-y-2">
-                {order.items?.map((it) => (
-                  <div key={it.id} className="flex items-center justify-between py-1 border-b border-gray-50">
-                    <span className="text-gray-900 truncate max-w-[320px]">{it.productName} <span className="text-gray-400">x{it.quantity}</span></span>
-                    <span className="font-bold text-black">{formatUSD(it.lineTotal)}</span>
-                  </div>
-                ))}
+                {order.items?.map((it) => {
+                  const localizedName = PRODUCT_LOCALIZATION[it.skuId]?.name || it.productName;
+                  return (
+                    <div key={it.id} className="flex items-center justify-between py-1 border-b border-gray-50">
+                      <span className="text-gray-900 truncate max-w-[320px]">{localizedName} <span className="text-gray-400">x{it.quantity}</span></span>
+                      <span className="font-bold text-black">{formatVND(it.lineTotal)}</span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
             {/* Total */}
             <div className="border-t border-gray-200 pt-3 flex justify-between items-center text-sm">
               <span className="font-extrabold text-black">Tổng thanh toán:</span>
-              <span className="font-extrabold text-base text-[#810017]">{formatUSD(order.totalAmount)}</span>
+              <span className="font-extrabold text-base text-[#810017]">{formatVND(order.totalAmount)}</span>
             </div>
           </div>
         )}
