@@ -47,7 +47,7 @@ export function StoreModal() {
           </span>
           <input
             type="text"
-            placeholder="Tìm theo mã ZIP (ví dụ: 10017, 90210), thành phố hoặc tên..."
+            placeholder="Tìm theo tên cửa hàng, địa chỉ hoặc thành phố (ví dụ: Đồng Khởi, Bà Triệu, Hà Nội)..."
             value={zipQuery}
             onChange={(e) => setZipQuery(e.target.value)}
             className="w-full bg-[#f2f2f2] focus:bg-white text-sm rounded-full pl-10 pr-4 py-2.5 outline-none border border-transparent focus:border-black transition-all"

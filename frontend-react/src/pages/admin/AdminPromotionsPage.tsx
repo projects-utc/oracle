@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { adminApi } from '../../api/adminApi';
 import { PromoOffer, RewardItem } from '../../data';
 import { useStore } from '../../contexts/StoreContext';
+import { formatVND } from '../../constants';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 
 export default function AdminPromotionsPage() {
@@ -18,7 +19,7 @@ export default function AdminPromotionsPage() {
   const [formPromoDesc, setFormPromoDesc] = useState('');
   const [formPromoCode, setFormPromoCode] = useState('');
   const [formPromoDiscount, setFormPromoDiscount] = useState('20');
-  const [formPromoMinOrder, setFormPromoMinOrder] = useState('50.00');
+  const [formPromoMinOrder, setFormPromoMinOrder] = useState('500000');
 
   // Reward Modal
   const [isRewardModalOpen, setIsRewardModalOpen] = useState(false);
@@ -129,7 +130,7 @@ export default function AdminPromotionsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-200 pb-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-gray-900 tracking-tight">Quản lý Ưu đãi & Quà đổi điểm</h1>
-          <p className="text-xs text-gray-500 mt-1">Cấu hình các chiến dịch Beauty Offers và danh mục Rewards Bazaar</p>
+          <p className="text-xs text-gray-500 mt-1">Cấu hình các chiến dịch Beauty Offers và danh mục quà đổi điểm</p>
         </div>
 
         {activeTab === 'PROMOS' ? (
@@ -167,7 +168,7 @@ export default function AdminPromotionsPage() {
             activeTab === 'REWARDS' ? 'border-black text-black' : 'border-transparent text-gray-500 hover:text-black'
           }`}
         >
-          Rewards Bazaar ({rewards.length})
+          Quà đổi điểm Beauty Insider ({rewards.length})
         </button>
       </div>
 
@@ -195,7 +196,7 @@ export default function AdminPromotionsPage() {
                   </td>
                   <td className="py-3 px-4 font-mono font-bold text-[#810017]">{p.code || '—'}</td>
                   <td className="py-3 px-4 font-bold">{p.discountPercent ? `${p.discountPercent}%` : 'Tặng kèm'}</td>
-                  <td className="py-3 px-4 text-gray-600">{p.minOrderAmount ? `$${p.minOrderAmount}` : '0$'}</td>
+                  <td className="py-3 px-4 text-gray-600">{p.minOrderAmount ? formatVND(p.minOrderAmount) : '0 ₫'}</td>
                   <td className="py-3 px-4 text-right">
                     <button onClick={() => handleDeletePromo(p)} className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg cursor-pointer">
                       <Trash2 className="w-3.5 h-3.5" />
@@ -228,7 +229,7 @@ export default function AdminPromotionsPage() {
                     <div className="font-mono text-[10px] text-gray-400">{r.id}</div>
                   </td>
                   <td className="py-3 px-4 font-semibold text-gray-700">{r.brand}</td>
-                  <td className="py-3 px-4 font-bold text-[#810017]">{r.pointsCost || 100} Points</td>
+                  <td className="py-3 px-4 font-bold text-[#810017]">{r.pointsCost || 100} điểm</td>
                   <td className="py-3 px-4 font-semibold">{r.stockQty || 50}</td>
                   <td className="py-3 px-4 text-right">
                     <button onClick={() => handleDeleteReward(r)} className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg cursor-pointer">
@@ -295,7 +296,7 @@ export default function AdminPromotionsPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold mb-1">Điểm đổi (Points)</label>
+                  <label className="block font-bold mb-1">Điểm đổi (điểm thưởng)</label>
                   <input type="number" value={formRewardPoints} onChange={(e) => setFormRewardPoints(e.target.value)} className="w-full px-3 py-2 border rounded-lg" />
                 </div>
                 <div>

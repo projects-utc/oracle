@@ -27,7 +27,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           <div className="w-12 h-12 rounded-xl bg-[#810017] text-white flex items-center justify-center mx-auto mb-4 text-xl font-bold shadow-lg">
             S
           </div>
-          <h2 className="text-xl font-extrabold tracking-tight mb-2">Sephora Admin Portal</h2>
+          <h2 className="text-xl font-extrabold tracking-tight mb-2">Cổng Quản trị Sephora</h2>
           <p className="text-xs text-slate-400 mb-6">
             Khu vực dành riêng cho Quản trị viên hệ thống. Vui lòng đăng nhập bằng tài khoản có quyền ADMIN.
           </p>
@@ -105,7 +105,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
               <div>
                 <div className="font-extrabold text-sm text-white tracking-tight flex items-center gap-1">
                   <span>Sephora</span>
-                  <span className="text-[#f6b834] font-bold">Admin</span>
+                  <span className="text-[#f6b834] font-bold">Quản trị</span>
                 </div>
                 <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Hệ thống Quản trị sàn</div>
               </div>

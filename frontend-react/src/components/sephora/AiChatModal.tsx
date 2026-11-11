@@ -71,8 +71,8 @@ export function AiChatModal() {
             </div>
             <div>
               <div className="font-bold text-sm flex items-center gap-1.5">
-                <span>Sephora AI Beauty Advisor</span>
-                <span className="bg-[#810017] text-white text-[9px] px-1.5 py-0.5 rounded-full font-bold">LIVE ORACLE</span>
+                <span>Trợ lý Làm đẹp AI Sephora</span>
+                <span className="bg-[#810017] text-white text-[9px] px-1.5 py-0.5 rounded-full font-bold">KẾT NỐI ORACLE</span>
               </div>
               <div className="text-[11px] text-gray-400">Tư vấn sản phẩm & ưu đãi trực tuyến 24/7</div>
             </div>

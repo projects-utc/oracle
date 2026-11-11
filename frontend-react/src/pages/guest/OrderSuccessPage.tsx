@@ -35,7 +35,14 @@ export default function OrderSuccessPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-100 pb-4 gap-2">
           <div>
             <div className="text-[11px] font-bold text-gray-500 uppercase">Mã đơn hàng:</div>
-            <div className="font-mono text-base font-extrabold text-[#810017]">{code}</div>
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-base font-extrabold text-[#810017]">{code}</span>
+              {order?.promoCode && (
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-rose-50 text-[#810017] border border-rose-200">
+                  🏷️ {order.promoCode}
+                </span>
+              )}
+            </div>
           </div>
           <div>
             <span className="inline-block px-3 py-1 bg-amber-50 border border-amber-300 text-amber-900 rounded-full text-xs font-bold">
@@ -54,6 +61,12 @@ export default function OrderSuccessPage() {
               <span className="font-bold text-gray-700">Địa chỉ giao hàng: </span>
               <span>{order.shippingAddress}</span>
             </div>
+            {order.fulfillmentStore && (
+              <div>
+                <span className="font-bold text-gray-700">Cửa hàng phục vụ: </span>
+                <span>{order.fulfillmentStore}</span>
+              </div>
+            )}
             <div>
               <span className="font-bold text-gray-700">Phương thức thanh toán: </span>
               <span>Thanh toán khi nhận hàng (COD)</span>
@@ -75,10 +88,33 @@ export default function OrderSuccessPage() {
               </div>
             </div>
 
-            {/* Total */}
-            <div className="border-t border-gray-200 pt-3 flex justify-between items-center text-sm">
-              <span className="font-extrabold text-black">Tổng thanh toán:</span>
-              <span className="font-extrabold text-base text-[#810017]">{formatVND(order.totalAmount)}</span>
+            {/* Cost Breakdown */}
+            <div className="border-t border-gray-200 pt-3 space-y-1.5 text-xs">
+              <div className="flex justify-between text-gray-600">
+                <span>Tạm tính:</span>
+                <span className="font-bold text-black">
+                  {formatVND(order.subtotalAmount || (order.totalAmount + (order.discountAmount || 0)))}
+                </span>
+              </div>
+              {order.discountAmount > 0 && (
+                <div className="flex justify-between text-emerald-700 font-semibold">
+                  <span>Giảm giá {order.promoCode ? `(${order.promoCode})` : ''}:</span>
+                  <span>-{formatVND(order.discountAmount)}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-gray-600">
+                <span>Phí vận chuyển:</span>
+                <span className="font-bold text-emerald-700">Miễn phí</span>
+              </div>
+              <div className="border-t border-gray-200 pt-2 flex justify-between items-center text-sm">
+                <span className="font-extrabold text-black">Tổng thanh toán:</span>
+                <span className="font-extrabold text-base text-[#810017]">{formatVND(order.totalAmount)}</span>
+              </div>
+              {order.pointsEarned > 0 && (
+                <div className="text-[11px] text-amber-800 font-semibold text-right pt-0.5">
+                  ⭐ Tích lũy: +{order.pointsEarned.toLocaleString('vi-VN')} điểm Beauty Insider
+                </div>
+              )}
             </div>
           </div>
         )}

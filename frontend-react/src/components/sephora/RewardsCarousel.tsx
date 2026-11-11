@@ -42,7 +42,7 @@ export function RewardsCarousel({ rewards }: { rewards?: RewardItem[] }) {
       <div className="max-w-[1280px] mx-auto px-4">
         <div className="flex items-baseline justify-between mb-4">
           <div>
-            <h2 className="text-lg sm:text-xl font-bold tracking-tight text-black">Beauty Insider Rewards Bazaar</h2>
+            <h2 className="text-lg sm:text-xl font-bold tracking-tight text-black">Kho Quà Đổi Điểm Beauty Insider</h2>
             <p className="text-xs text-gray-500 mt-0.5">Dùng điểm tích lũy của bạn để đổi các món quà mini cao cấp</p>
           </div>
         </div>

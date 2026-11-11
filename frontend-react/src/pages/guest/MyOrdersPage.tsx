@@ -60,11 +60,18 @@ export default function MyOrdersPage() {
           {orders.map((o) => (
             <div key={o.id} className="bg-white rounded-2xl border border-gray-200 p-6 shadow-xs">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-100 pb-3 mb-4 gap-2">
-                <div>
+                <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-mono font-bold text-sm text-[#810017]">{o.orderCode}</span>
-                  <span className="text-xs text-gray-500 ml-2">
+                  <span className="text-xs text-gray-500">
                     {new Date(o.createdAt).toLocaleString('vi-VN')}
                   </span>
+                  {o.promoCode && (
+                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-rose-50 text-[#810017] border border-rose-200 flex items-center gap-1">
+                      <span>🏷️</span>
+                      <span>Mã: {o.promoCode}</span>
+                      {o.discountAmount > 0 && <span>(-{formatVND(o.discountAmount)})</span>}
+                    </span>
+                  )}
                 </div>
                 <div className="flex items-center gap-2">
                   <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
@@ -100,13 +107,52 @@ export default function MyOrdersPage() {
                 })}
               </div>
 
-              <div className="border-t border-gray-100 pt-3 flex items-center justify-between text-xs">
-                <div className="text-gray-500">
-                  Giao tới: <span className="font-semibold text-black">{o.shippingName}</span> • {o.shippingAddress}
+              {/* Order Footer: Shipping Info & Price Breakdown */}
+              <div className="border-t border-gray-100 pt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <div className="space-y-1 text-gray-600">
+                  <div>
+                    <span className="font-bold text-gray-800">Người nhận: </span>
+                    <span className="font-semibold text-black">{o.shippingName}</span>
+                    {o.shippingPhone && <span> ({o.shippingPhone})</span>}
+                  </div>
+                  <div>
+                    <span className="font-bold text-gray-800">Địa chỉ: </span>
+                    <span>{o.shippingAddress}</span>
+                  </div>
+                  {o.fulfillmentStore && (
+                    <div className="text-[11px] text-gray-500">
+                      <span className="font-bold text-gray-700">Điểm phục vụ: </span>
+                      <span>{o.fulfillmentStore}</span>
+                    </div>
+                  )}
+                  {o.pointsEarned > 0 && (
+                    <div className="text-[11px] text-amber-800 font-semibold pt-1">
+                      ⭐ Tích lũy: +{o.pointsEarned.toLocaleString('vi-VN')} điểm Beauty Insider
+                    </div>
+                  )}
                 </div>
-                <div className="text-right">
-                  <span className="text-gray-500 text-xs mr-2">Tổng tiền:</span>
-                  <span className="font-extrabold text-base text-[#810017]">{formatVND(o.totalAmount)}</span>
+
+                <div className="bg-gray-50/80 p-3.5 rounded-xl border border-gray-100 space-y-1.5 md:ml-auto md:w-72">
+                  <div className="flex justify-between text-gray-600">
+                    <span>Tạm tính:</span>
+                    <span className="font-bold text-black">
+                      {formatVND(o.subtotalAmount || (o.totalAmount + (o.discountAmount || 0)))}
+                    </span>
+                  </div>
+                  {o.discountAmount > 0 && (
+                    <div className="flex justify-between text-emerald-700 font-semibold">
+                      <span>Giảm giá {o.promoCode ? `(${o.promoCode})` : ''}:</span>
+                      <span>-{formatVND(o.discountAmount)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-gray-600">
+                    <span>Vận chuyển:</span>
+                    <span className="font-bold text-emerald-700">Miễn phí</span>
+                  </div>
+                  <div className="flex justify-between text-sm font-extrabold text-black pt-2 border-t border-gray-200">
+                    <span>Tổng thanh toán:</span>
+                    <span className="text-base text-[#810017]">{formatVND(o.totalAmount)}</span>
+                  </div>
                 </div>
               </div>
             </div>

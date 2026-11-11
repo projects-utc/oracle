@@ -15,7 +15,7 @@ export default function AdminStoresPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingStore, setEditingStore] = useState<StoreLocation | null>(null);
   const [formName, setFormName] = useState('Sephora Landmark 81');
-  const [formAddress, setFormAddress] = useState('720A Dien Bien Phu, Binh Thanh');
+  const [formAddress, setFormAddress] = useState('720A Điện Biên Phủ, Bình Thạnh');
   const [formCity, setFormCity] = useState('TP.HCM');
   const [formZip, setFormZip] = useState('70000');
   const [formDistance, setFormDistance] = useState('1.2 km');
@@ -23,7 +23,7 @@ export default function AdminStoresPage() {
   const openCreateStore = () => {
     setEditingStore(null);
     setFormName('Sephora Landmark 81');
-    setFormAddress('720A Dien Bien Phu, Binh Thanh');
+    setFormAddress('720A Điện Biên Phủ, Bình Thạnh');
     setFormCity('TP.HCM');
     setFormZip('70000');
     setFormDistance('1.2 km');
@@ -36,7 +36,7 @@ export default function AdminStoresPage() {
     setFormAddress(s.address);
     setFormCity(s.city);
     setFormZip(s.zipCode);
-    setFormDistance(s.distance || s.distanceLabel || '0.5 mi');
+    setFormDistance(s.distance || s.distanceLabel || '1.2 km');
     setIsModalOpen(true);
   };
 

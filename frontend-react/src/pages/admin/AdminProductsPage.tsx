@@ -47,11 +47,11 @@ export default function AdminProductsPage() {
     setFormBrand('Sephora Collection');
     setFormName('Sản phẩm mỹ phẩm mới');
     setFormCategory('skincare');
-    setFormPrice('35.00');
+    setFormPrice('850000');
     setFormVariation('50ml');
     setFormStock('50');
     setFormImage('https://www.sephora.com/productimages/sku/s2333607-main-zoom.jpg');
-    setFormBadge('Clean at Sephora');
+    setFormBadge('Mỹ phẩm sạch');
     setFormCollections(['CHOSEN_FOR_YOU']);
     setIsModalOpen(true);
   };
@@ -329,18 +329,18 @@ export default function AdminProductsPage() {
                     onChange={(e) => setFormCategory(e.target.value)}
                     className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-black outline-none bg-white font-semibold"
                   >
-                    <option value="skincare">Skincare</option>
-                    <option value="makeup">Makeup</option>
-                    <option value="fragrance">Fragrance</option>
-                    <option value="hair">Hair</option>
-                    <option value="bath-body">Bath & Body</option>
+                    <option value="skincare">Chăm sóc da (skincare)</option>
+                    <option value="makeup">Trang điểm (makeup)</option>
+                    <option value="fragrance">Nước hoa (fragrance)</option>
+                    <option value="hair">Chăm sóc tóc (hair)</option>
+                    <option value="bath-body">Tắm & Cơ thể (bath-body)</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block font-bold text-gray-700 mb-1">Giá bán (USD) *</label>
+                  <label className="block font-bold text-gray-700 mb-1">Giá bán (VNĐ) *</label>
                   <input
                     type="number"
-                    step="0.01"
+                    step="1000"
                     required
                     value={formPrice}
                     onChange={(e) => setFormPrice(e.target.value)}
@@ -366,7 +366,7 @@ export default function AdminProductsPage() {
                     type="text"
                     value={formVariation}
                     onChange={(e) => setFormVariation(e.target.value)}
-                    placeholder="50ml, 30 Colors..."
+                    placeholder="50ml, Màu 30..."
                     className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-black outline-none"
                   />
                 </div>
@@ -376,7 +376,7 @@ export default function AdminProductsPage() {
                     type="text"
                     value={formBadge}
                     onChange={(e) => setFormBadge(e.target.value)}
-                    placeholder="Clean at Sephora..."
+                    placeholder="Mỹ phẩm sạch, Yêu thích 2026..."
                     className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-black outline-none"
                   />
                 </div>
@@ -397,9 +397,9 @@ export default function AdminProductsPage() {
                 <label className="block font-bold text-gray-700 mb-1.5">Kệ trưng bày Storefront:</label>
                 <div className="flex flex-wrap gap-4">
                   {[
-                    { id: 'CHOSEN_FOR_YOU', label: 'Chosen For You' },
-                    { id: 'JUST_DROPPED', label: 'Just Dropped' },
-                    { id: 'SELLING_FAST', label: 'Selling Fast' },
+                    { id: 'CHOSEN_FOR_YOU', label: 'Dành riêng cho bạn (Chosen For You)' },
+                    { id: 'JUST_DROPPED', label: 'Hàng mới lên kệ (Just Dropped)' },
+                    { id: 'SELLING_FAST', label: 'Bán chạy nhất (Selling Fast)' },
                   ].map((col) => (
                     <label key={col.id} className="flex items-center gap-1.5 cursor-pointer">
                       <input

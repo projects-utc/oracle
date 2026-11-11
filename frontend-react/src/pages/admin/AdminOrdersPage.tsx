@@ -110,6 +110,14 @@ export default function AdminOrdersPage() {
                     </td>
                     <td className="py-3 px-4">
                       <div className="font-extrabold text-black">{formatVND(o.totalAmount)}</div>
+                      {o.promoCode && (
+                        <div className="text-[10px] text-[#810017] font-semibold flex items-center gap-1 mt-0.5">
+                          <span className="font-mono bg-rose-50 px-1 py-0.2 rounded border border-rose-200">
+                            🏷️ {o.promoCode}
+                          </span>
+                          {o.discountAmount > 0 && <span>(-{formatVND(o.discountAmount)})</span>}
+                        </div>
+                      )}
                     </td>
                     <td className="py-3 px-4">
                       <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
@@ -194,6 +202,35 @@ export default function AdminOrdersPage() {
                     );
                   })}
                 </div>
+              </div>
+
+              {/* Cost breakdown */}
+              <div className="bg-gray-50 p-3.5 rounded-xl border border-gray-100 space-y-1.5 text-xs">
+                <div className="flex justify-between text-gray-600">
+                  <span>Tạm tính tiền hàng:</span>
+                  <span className="font-bold text-black">
+                    {formatVND(selectedOrder.subtotalAmount || (selectedOrder.totalAmount + (selectedOrder.discountAmount || 0)))}
+                  </span>
+                </div>
+                {selectedOrder.discountAmount > 0 && (
+                  <div className="flex justify-between text-emerald-700 font-semibold">
+                    <span>Mã ưu đãi {selectedOrder.promoCode ? `(${selectedOrder.promoCode})` : ''}:</span>
+                    <span>-{formatVND(selectedOrder.discountAmount)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-gray-600">
+                  <span>Phí vận chuyển:</span>
+                  <span className="font-bold text-emerald-700">Miễn phí</span>
+                </div>
+                <div className="flex justify-between text-sm font-extrabold text-black pt-2 border-t border-gray-200">
+                  <span>Tổng tiền thanh toán:</span>
+                  <span className="text-base text-[#810017]">{formatVND(selectedOrder.totalAmount)}</span>
+                </div>
+                {selectedOrder.pointsEarned > 0 && (
+                  <div className="text-[11px] text-amber-800 font-semibold text-right pt-0.5">
+                    ⭐ Điểm tích lũy cho khách: +{selectedOrder.pointsEarned.toLocaleString('vi-VN')} điểm
+                  </div>
+                )}
               </div>
 
               {/* Status Update Action Buttons */}

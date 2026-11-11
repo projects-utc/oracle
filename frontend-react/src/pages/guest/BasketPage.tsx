@@ -20,7 +20,7 @@ export default function BasketPage() {
 
   const [shippingName, setShippingName] = useState(currentUser?.fullName || '');
   const [shippingPhone, setShippingPhone] = useState(currentUser?.phone || '');
-  const [shippingAddress, setShippingAddress] = useState('123 Nguyen Hue, Quan 1, TP.HCM');
+  const [shippingAddress, setShippingAddress] = useState('123 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh');
   const [loadingCheckout, setLoadingCheckout] = useState(false);
   const [promoError, setPromoError] = useState('');
   React.useEffect(() => {

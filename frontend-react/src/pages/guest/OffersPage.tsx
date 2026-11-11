@@ -48,8 +48,8 @@ export default function OffersPage() {
   return (
     <div className="max-w-[1280px] mx-auto px-4 py-8 font-sans">
       <div className="border-b border-gray-200 pb-4 mb-8">
-        <h1 className="text-2xl font-extrabold text-black tracking-tight">Beauty Offers & Quà tặng đổi điểm</h1>
-        <p className="text-xs text-gray-500 mt-1">Tổng hợp toàn bộ 23 mã khuyến mãi và 15 quà tặng Beauty Insider Rewards Bazaar</p>
+        <h1 className="text-2xl font-extrabold text-black tracking-tight">Khuyến mãi & Quà tặng đổi điểm</h1>
+        <p className="text-xs text-gray-500 mt-1">Tổng hợp toàn bộ 23 mã khuyến mãi và 15 quà tặng Đổi điểm Beauty Insider</p>
       </div>
 
       {/* Offers Section */}
@@ -82,7 +82,7 @@ export default function OffersPage() {
 
       {/* Rewards Bazaar Section */}
       <div>
-        <h2 className="text-lg font-bold text-black mb-4">Rewards Bazaar (Đổi điểm nhận quà)</h2>
+        <h2 className="text-lg font-bold text-black mb-4">Kho Quà Đổi Điểm Beauty Insider</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {rewards.map((r) => (
             <div key={r.id} className="bg-white rounded-xl border border-gray-200 p-3.5 flex flex-col justify-between hover:border-black transition-all">
@@ -97,7 +97,7 @@ export default function OffersPage() {
                   onClick={() => handleRedeem(r)}
                   className="bg-black text-white text-[11px] font-bold px-3 py-1.5 rounded-full hover:bg-neutral-800 transition-colors cursor-pointer"
                 >
-                  Đổi 100 pts
+                  Đổi quà
                 </button>
               </div>
             </div>
