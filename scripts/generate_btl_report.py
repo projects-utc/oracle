@@ -110,6 +110,29 @@ def create_report():
         run.font.size = Pt(12)
         return p
 
+    def add_figure(img_path, title_text, width=Inches(5.8)):
+        import os
+        if os.path.exists(img_path):
+            p_img = doc.add_paragraph()
+            p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            p_img.paragraph_format.first_line_indent = Inches(0)
+            p_img.paragraph_format.space_before = Pt(8)
+            p_img.paragraph_format.space_after = Pt(2)
+            run_img = p_img.add_run()
+            run_img.add_picture(img_path, width=width)
+        
+        p_caption = doc.add_paragraph()
+        p_caption.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_caption.paragraph_format.first_line_indent = Inches(0)
+        p_caption.paragraph_format.space_before = Pt(2)
+        p_caption.paragraph_format.space_after = Pt(8)
+        run_caption = p_caption.add_run(title_text)
+        run_caption.italic = True
+        run_caption.bold = True
+        run_caption.font.name = 'Times New Roman'
+        run_caption.font.size = Pt(11)
+        return p_caption
+
     def add_figure_title(text):
         p = doc.add_paragraph()
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -342,7 +365,7 @@ def create_report():
     add_p('- PDB$SEED: Pluggable Database mẫu do Oracle cung cấp để nhân bản nhanh các PDB mới.')
     add_p('- FREEPDB1: Pluggable Database chuyên dụng chứa toàn bộ dữ liệu, schema và đối tượng nghiệp vụ của sàn thương mại điện tử Sephora Việt Nam. Tầng ứng dụng Spring Boot chỉ kết nối cục bộ vào FREEPDB1 qua cổng dịch vụ 1521.')
 
-    add_figure_title('Hình 1: Mô hình kiến trúc Oracle 23ai Multitenant phân tách CDB$ROOT và FREEPDB1')
+    add_figure('docx/images/fig1_oracle_multitenant_architecture.png', 'Hình 1: Mô hình kiến trúc Oracle 23ai Multitenant phân tách CDB$ROOT và FREEPDB1')
 
     add_title('2.2. Thiết kế lưu trữ vật lý Tablespace và Datafile', level=2)
     add_p('Thay vì lưu trữ dữ liệu tùy tiện trong tablespace mặc định USERS hoặc SYSTEM, nhóm đã chủ động phân tách không gian lưu trữ vật lý thành hai Tablespace riêng biệt:')
@@ -379,14 +402,14 @@ def create_report():
     add_p('- SEP_ORDER_ITEMS: Chi tiết các mặt hàng trong đơn, liên kết khóa ngoại với sep_orders (ON DELETE CASCADE) và sep_products.')
     add_p('- SEP_AUDIT_LOGS: Nhật ký kiểm toán an ninh lưu lại mọi hành vi thay đổi giá sản phẩm và khởi tạo đơn hàng.')
 
-    add_figure_title('Hình 2: Sơ đồ quan hệ thực thể (ERD) phân hệ giao dịch đơn hàng và kho')
+    add_figure('docx/images/fig2_erd_database_schema.png', 'Hình 2: Sơ đồ quan hệ thực thể (ERD) phân hệ giao dịch đơn hàng và kho')
 
     add_title('2.4. Thiết kế kiểm soát tương tranh với khóa bi quan (Pessimistic Locking)', level=2)
     add_p('Trong kịch bản bán hàng khuyến mãi, hàng trăm khách hàng có thể cùng lúc chọn mua một mặt hàng có số lượng tồn kho có hạn. Nếu áp dụng cơ chế đọc dữ liệu thông thường bằng Java, hệ thống sẽ gặp lỗi Race Condition:')
     add_p('Khách hàng A đọc tồn kho còn 1 -> Khách hàng B đọc tồn kho còn 1 -> Cả hai cùng vượt qua điều kiện kiểm tra tồn -> Cả hai cùng trừ kho -> Tồn kho thực tế bị âm (-1), dẫn đến tổn thất lớn cho doanh nghiệp.')
     add_p('Giải pháp kiến trúc: Triển khai câu lệnh SELECT ... FOR UPDATE ngay bên trong thủ tục PL/SQL SP_PLACE_ORDER. Khi phiên giao dịch của khách hàng A bắt đầu đọc bản ghi sản phẩm, Oracle sẽ đặt một khóa độc quyền (Exclusive Row-Level Lock) trên dòng dữ liệu đó. Mọi phiên giao dịch của khách hàng B buộc phải xếp hàng chờ cho đến khi phiên A hoàn tất COMMIT hoặc ROLLBACK. Nhờ đó, số lượng tồn kho luôn được kiểm soát chính xác 100%.')
 
-    add_figure_title('Hình 3: Lưu đồ thuật toán giao dịch đặt hàng sử dụng khóa bi quan SELECT FOR UPDATE')
+    add_figure('docx/images/fig3_pessimistic_locking_flowchart.png', 'Hình 3: Lưu đồ thuật toán giao dịch đặt hàng sử dụng khóa bi quan SELECT FOR UPDATE')
 
     doc.add_page_break()
 
@@ -442,13 +465,13 @@ def create_report():
     add_p('Điểm sáng tạo then chốt trong Package Body:')
     add_p('1. Khóa bi quan và kiểm tra tồn kho: Vòng lặp duyệt qua các mặt hàng trong sep_cart_items và thực thi SELECT stock_qty ... FROM sep_products WHERE id = ... FOR UPDATE. Nếu tồn kho không đủ, thủ tục ném mã lỗi tùy biến RAISE_APPLICATION_ERROR(-20001, \'Sản phẩm không đủ tồn kho...\').')
     add_p('2. Tính chiết khấu và tự động sinh mã đơn: Hàm FN_CALCULATE_DISCOUNT tính tỷ lệ giảm giá theo mã khuyến mãi. Mã đơn được sinh theo chuẩn SEP-YYYYMMDD-XXXXXX sử dụng hàm băm SYS_GUID().')
-    add_p('3. Chèn dữ liệu, trừ kho và tích lũy điểm: Chèn đồng thời vào sep_orders và sep_order_items, trừ tồn kho trong sep_products, cộng điểm tích lũy vào sep_users và xóa giỏ hàng trong cùng một giao dịch.')
+    add_p('3. Chèn dữ liệu, trừ kho và tích lũy điểm: Chèn đồng thời vào sep_orders và sep_order_items, trừ tồn kho trong sep_products, xóa giỏ hàng và cộng điểm tích lũy vào sep_users theo chuẩn tỷ lệ 1.000 ₫ = 1 điểm (TRUNC(total_amount / 1000)) trong cùng một giao dịch nguyên tử.')
 
     add_title('3.3. Hiện thực hóa hệ thống Database Triggers tự động', level=2)
     add_p('Hệ thống cài đặt 3 Database Triggers tự động tại tệp migration V4__oracle_advanced_plsql.sql:')
     add_p('1. Trigger hoàn tồn kho (TRG_RESTORE_STOCK_ON_CANCEL): Lắng nghe sự kiện AFTER UPDATE OF order_status ON sep_orders FOR EACH ROW với điều kiện WHEN (NEW.order_status = \'CANCELLED\' AND OLD.order_status <> \'CANCELLED\'). Trigger tự động lặp qua các dòng trong sep_order_items và cộng trả lại số lượng tồn kho vào sep_products.')
     add_p('2. Trigger kiểm toán giá sản phẩm (TRG_AUDIT_PRODUCT_PRICE): Bắt sự kiện AFTER UPDATE OF price_value ON sep_products FOR EACH ROW. Khi giá bán thay đổi, trigger tự động ghi lại giá cũ (:OLD.price_value) và giá mới (:NEW.price_value) vào bảng sep_audit_logs.')
-    add_p('3. Trigger tự động thăng hạng khách hàng (TRG_UPDATE_LOYALTY_TIER): Bắt sự kiện BEFORE UPDATE OF points_balance ON sep_users. Tự động chuyển đổi loyalty_tier thành \'ROUGE\' (từ 1000 điểm) hoặc \'VIB\' (từ 350 điểm).')
+    add_p('3. Trigger tự động thăng hạng khách hàng (TRG_UPDATE_LOYALTY_TIER): Bắt sự kiện BEFORE UPDATE OF points_balance ON sep_users. Tự động chuyển đổi loyalty_tier thành \'ROUGE\' (từ 1.000 điểm tương ứng chi tiêu tích lũy 1.000.000 ₫) hoặc \'VIB\' (từ 350 điểm tương ứng chi tiêu tích lũy 350.000 ₫).')
 
     add_title('3.4. Khung nhìn báo cáo (Views) và Tối ưu hóa truy vấn', level=2)
     add_p('Để loại bỏ hoàn toàn các vòng lặp Java Stream gây quá tải bộ nhớ RAM, nhóm đã xây dựng View tổng hợp VW_DASHBOARD_METRICS thực thi tính toán ngay tại nhân CSDL:')
@@ -495,6 +518,18 @@ def create_report():
         "---------------------------------------------------------------------------------------"
     )
     add_p('Kết quả thực tế chứng minh Oracle đã chuyển đổi từ quét toàn bộ bảng (TABLE ACCESS FULL với chi phí I/O cao) sang quét phạm vi chỉ mục (INDEX RANGE SCAN) với chi phí CPU gần như bằng 0, đáp ứng xuất sắc tiêu chí tối ưu hóa truy vấn của giảng viên.')
+
+    add_figure('docx/images/fig4_explain_plan_comparison.png', 'Hình 4: So sánh Explain Plan giữa Full Table Scan và Index Range Scan')
+
+    add_title('3.5. Ứng dụng thực tế: Giao diện Người dùng và Bảng điều khiển Quản trị', level=2)
+    add_p('Hệ thống cơ sở dữ liệu Oracle 23ai được kết nối trực tiếp với ứng dụng full-stack (Spring Boot 3 REST API và React Single Page Application), minh chứng cho tính ứng dụng thực tiễn cao:')
+    add_p('1. Phân hệ mua hàng và lịch sử đơn hàng (Storefront): Người dùng có thể duyệt danh mục, thêm sản phẩm vào giỏ hàng, áp dụng mã giảm giá và thanh toán. Chi tiết đơn hàng hiển thị đầy đủ thông tin chiết khấu, trạng thái vận chuyển và số điểm thưởng tích lũy Beauty Insider được tính toán chính xác theo công thức nghiệp vụ.')
+
+    add_figure('docx/images/fig5_storefront_order_breakdown.png', 'Hình 5: Giao diện chi tiết đơn hàng hiển thị mã giảm giá và điểm thưởng tích lũy')
+
+    add_p('2. Phân hệ Bảng điều khiển Quản trị (Admin Dashboard): Cung cấp các thẻ chỉ số KPI tổng hợp theo thời gian thực (tổng doanh thu, số lượng đơn hàng, số khách hàng, cảnh báo hàng sắp hết kho) và danh sách nhật ký kiểm toán hệ thống. Mọi chỉ số này được tổng hợp tức thời từ View VW_DASHBOARD_METRICS của Oracle 23ai mà không cần xử lý lặp phức tạp trên tầng ứng dụng.')
+
+    add_figure('docx/images/fig6_admin_dashboard_metrics.png', 'Hình 6: Bảng điều khiển quản trị (Admin Dashboard) truy vấn trực tiếp từ View Oracle')
 
     doc.add_page_break()
 
